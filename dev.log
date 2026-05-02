@@ -13,3 +13,5 @@ Browserslist: browsers data (caniuse-lite) is 11 months old. Please run:
 7:22:42 PM [vite] hmr update /src/components/PremiumCard.tsx, /src/index.css
 7:22:44 PM [vite] hmr update /src/pages/HomeDashboard.tsx, /src/index.css
 7:22:48 PM [vite] hmr update /src/pages/HomeDashboard.tsx, /src/index.css
+7:30:06 PM [vite] hmr update /src/components/AppSidebar.tsx, /src/index.css
+7:31:32 PM [vite] hmr update /src/App.tsx, /src/index.css
