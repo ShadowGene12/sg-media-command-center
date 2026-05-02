@@ -1,0 +1,225 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* SG Media Brand Palette */
+    --violet-50: #F0EEFF;
+    --violet-200: #C4B5FD;
+    --violet-400: #8B6CF6;
+    --violet-500: #6D4AE6;
+    --violet-600: #5233B8;
+    --violet-800: #3A2188;
+    --violet-950: #221359;
+
+    --steel-50: #F8F9FA;
+    --steel-200: #D8DDE3;
+    --steel-400: #A8B2BD;
+    --steel-500: #7A8694;
+    --steel-600: #515B68;
+    --steel-800: #333A44;
+    --steel-900: #222831;
+    --steel-950: #1A1E24;
+
+    --black-50: #F5F5F6;
+    --black-200: #D1D1D4;
+    --black-500: #58585E;
+    --black-800: #1C1C20;
+    --black-950: #0A0A0C;
+
+    --green-500: #10B981;
+    --amber-500: #F59E0B;
+    --red-500: #EF4444;
+
+    /* Pillar Colors */
+    --pillar-market: #6D4AE6;
+    --pillar-acquisition: #378ADD;
+    --pillar-sales: #1D9E75;
+    --pillar-profit: #F59E0B;
+    --pillar-finance: #D85A30;
+
+    /* HSL Conversions for shadcn components (Dark Mode Default) */
+    --background: 240 10% 3.9%; /* Deep midnight: #0A0A0C */
+    --foreground: 210 20% 98%; /* steel-50 */
+
+    --card: 216 16% 12%; /* steel-950 */
+    --card-foreground: 210 20% 98%;
+
+    --popover: 216 18% 16%; /* steel-900 */
+    --popover-foreground: 210 20% 98%;
+
+    --primary: 253 76% 60%; /* violet-500 */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 215 14% 23%; /* steel-800 */
+    --secondary-foreground: 210 20% 98%;
+
+    --muted: 215 14% 23%; /* steel-800 */
+    --muted-foreground: 211 16% 70%; /* steel-400 */
+
+    --accent: 253 65% 21%; /* violet-950 */
+    --accent-foreground: 248 100% 96%; /* violet-50 */
+
+    --destructive: 0 84% 60%; /* red-500 */
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 215 14% 23%; /* steel-800 */
+    --input: 215 14% 23%;
+    --ring: 253 76% 60%; /* violet-500 */
+
+    --radius: 0.75rem; /* 12px for cards */
+
+    /* Sidebar — steel-950 per spec Section 2.6 */
+    --sidebar-background: 216 16% 12%;
+    --sidebar-foreground: 210 20% 98%;
+    --sidebar-primary: 253 76% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 215 14% 23%;
+    --sidebar-accent-foreground: 210 20% 98%;
+    --sidebar-border: 215 14% 23%;
+    --sidebar-ring: 253 76% 60%;
+  }
+
+  /* We force dark mode variables in light mode too, since the app is dark-first */
+  .light {
+    --background: 240 9% 96%; /* black-50 */
+    --foreground: 240 7% 12%; /* black-800 */
+    
+    --card: 0 0% 100%; /* white */
+    --card-foreground: 240 7% 12%;
+    
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 7% 12%;
+    
+    --primary: 253 76% 60%;
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 240 5% 96%; /* black-50 */
+    --secondary-foreground: 240 7% 12%;
+    
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 5% 36%; /* black-500 */
+    
+    --accent: 253 76% 60%;
+    --accent-foreground: 0 0% 100%;
+    
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    
+    --border: 210 16% 88%; /* steel-200 */
+    --input: 210 16% 88%;
+    --ring: 253 76% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased relative min-h-screen overflow-x-hidden;
+    /* Force dark mode */
+    color-scheme: dark;
+  }
+
+  /* Premium Noise Grain */
+  body::after {
+    content: "";
+    @apply fixed inset-0 pointer-events-none z-[-1] opacity-[0.025];
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  }
+  
+  /* Adding JetBrains Mono for data points */
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Custom Premium Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  /* Animated Laser Border Conic Gradient */
+  .animated-laser-border {
+    position: relative;
+    overflow: hidden;
+  }
+  .animated-laser-border::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    background: conic-gradient(from var(--border-angle) at 50% 50%, transparent 70%, rgba(139, 92, 246, 1) 100%);
+    animation: spinBorder 4s linear infinite;
+    z-index: -1;
+    border-radius: inherit;
+  }
+  @property --border-angle {
+    syntax: "<angle>";
+    inherits: false;
+    initial-value: 0deg;
+  }
+  @keyframes spinBorder {
+    to { --border-angle: 360deg; }
+  }
+
+  /* Driver.js Hyper-Premium Overrides */
+  .driver-popover {
+    background-color: rgba(15, 10, 31, 0.95) !important;
+    backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(109, 74, 230, 0.3) !important;
+    border-radius: 1rem !important;
+    box-shadow: 0 0 40px -10px rgba(109, 74, 230, 0.4) !important;
+    color: white !important;
+  }
+  .driver-popover-title {
+    font-family: 'Space Grotesk', system-ui, sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 1.25rem !important;
+    color: white !important;
+  }
+  .driver-popover-description {
+    color: rgba(255, 255, 255, 0.7) !important;
+    font-size: 0.875rem !important;
+  }
+  .driver-popover-footer button {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+    border-radius: 0.5rem !important;
+    text-shadow: none !important;
+    transition: all 0.2s ease-in-out !important;
+  }
+  .driver-popover-footer button:hover {
+    background-color: rgba(109, 74, 230, 0.8) !important;
+    border-color: rgba(109, 74, 230, 0.8) !important;
+  }
+  .driver-popover-arrow {
+    border-color: rgba(15, 10, 31, 0.95) !important;
+  }
+  
+  .bg-skeletal-grid {
+    background-image: 
+      linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  @keyframes shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+}
