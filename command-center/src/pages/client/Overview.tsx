@@ -1,218 +1,237 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { ORGANIZATION, PILLARS, KPI_DATA, REPORTS, ACTION_ITEMS, MILESTONES, RECOMMENDATIONS as RECS } from "@/lib/mockData";
 import { ArrowUpRight, ArrowRight, Target, TrendingUp, CalendarCheck, FileText, Map, Clock, Lightbulb } from "lucide-react";
 import { Link } from "react-router-dom";
+import { PageHeader, SectionLabel } from "@/components/PageHeader";
+import { PremiumCard } from "@/components/PremiumCard";
 
-const statusColor = (s: string) =>
-  s === "Completed" ? "bg-status-success/10 text-status-success" :
-  s === "In Progress" ? "bg-status-info/10 text-status-info" :
-  "bg-muted text-muted-foreground";
+const PILLAR_COLORS: Record<number, string> = {
+  1: "#6D4AE6", 2: "#378ADD", 3: "#1D9E75", 4: "#F59E0B", 5: "#D85A30",
+};
+
+const URGENCY_COLORS: Record<string, string> = {
+  High: "text-red-400 bg-red-500/10 border-red-500/20",
+  Medium: "text-amber-400 bg-amber-500/10 border-amber-500/20",
+  Low: "text-slate-400 bg-white/5 border-white/10",
+  Immediate: "text-red-400 bg-red-500/10 border-red-500/20",
+};
+
+const containerVars = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.08, delayChildren: 0.2 } },
+};
+const itemVars = {
+  hidden: { opacity: 0, y: 14, filter: "blur(6px)" },
+  show: { opacity: 1, y: 0, filter: "blur(0px)", transition: { type: "spring", stiffness: 100, damping: 18 } },
+};
+
+const GlassCard = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
+  <PremiumCard glowColor="rgba(139,92,246,0.08)" className={className}>
+    {children}
+  </PremiumCard>
+);
 
 export default function Overview() {
   const activePriorities = ACTION_ITEMS.filter(a => a.status === "In Progress");
   const nextMilestone = MILESTONES.find(m => m.status === "In Progress" || m.status === "Upcoming");
   const topRecs = RECS.slice(0, 3);
   const topKpis = KPI_DATA.slice(0, 6);
-  const latestReport = REPORTS.filter(r => r.status === "Completed").sort((a,b) => b.date.localeCompare(a.date))[0];
+  const latestReport = REPORTS.filter(r => r.status === "Completed").sort((a, b) => b.date.localeCompare(a.date))[0];
+
+  const summaryCards = [
+    { label: "Health Score", value: `${ORGANIZATION.healthScore}`, sub: "/ 100", icon: Target, accent: "#10B981", progress: ORGANIZATION.healthScore },
+    { label: "Active Actions", value: `${activePriorities.length}`, sub: `of ${ACTION_ITEMS.length} total`, icon: Map, accent: "#6D4AE6" },
+    { label: "Reports", value: `${REPORTS.filter(r => r.status === "Completed").length}`, sub: "completed", icon: FileText, accent: "#378ADD" },
+    { label: "Next Milestone", value: nextMilestone?.title ?? "—", sub: nextMilestone?.date, icon: Clock, accent: "#F59E0B", text: true },
+  ];
 
   return (
-    <div className="space-y-8 max-w-7xl">
-      {/* Organization Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-foreground">{ORGANIZATION.name}</h1>
-        <p className="text-muted-foreground mt-1 max-w-2xl">{ORGANIZATION.engagementSummary}</p>
-        <div className="flex flex-wrap gap-2 mt-3">
-          <Badge variant="outline" className="text-xs">{ORGANIZATION.program}</Badge>
-          <Badge variant="outline" className="text-xs">{ORGANIZATION.industry}</Badge>
-          <Badge variant="outline" className="text-xs">{ORGANIZATION.currentPhase}</Badge>
+    <div className="space-y-10 max-w-7xl pb-12">
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="space-y-3"
+      >
+        <p className="text-xs font-mono tracking-widest text-violet-400/80 uppercase">Client Portal — DFY Tier</p>
+        <h1 className="text-4xl font-display font-light text-white tracking-tight">{ORGANIZATION.name}</h1>
+        <p className="text-base text-slate-400 font-light max-w-2xl leading-relaxed">{ORGANIZATION.engagementSummary}</p>
+        <div className="flex flex-wrap gap-2 pt-1">
+          {[ORGANIZATION.program, ORGANIZATION.industry, ORGANIZATION.currentPhase].map(tag => (
+            <span key={tag} className="text-[10px] font-mono px-3 py-1 rounded-full border border-white/10 text-slate-500 bg-white/[0.02]">{tag}</span>
+          ))}
         </div>
-      </div>
+      </motion.div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Health Score</p>
-              <Target className="h-4 w-4 text-muted-foreground" />
-            </div>
-            <div className="mt-2 flex items-end gap-2">
-              <span className="text-3xl font-bold text-foreground">{ORGANIZATION.healthScore}</span>
-              <span className="text-xs text-status-success mb-1">/ 100</span>
-            </div>
-            <div className="mt-2 h-1.5 rounded-full bg-muted overflow-hidden">
-              <div className="h-full rounded-full bg-status-success" style={{ width: `${ORGANIZATION.healthScore}%` }} />
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Active Actions</p>
-              <Map className="h-4 w-4 text-muted-foreground" />
-            </div>
-            <div className="mt-2">
-              <span className="text-3xl font-bold text-foreground">{activePriorities.length}</span>
-              <span className="text-xs text-muted-foreground ml-2">of {ACTION_ITEMS.length} total</span>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Reports</p>
-              <FileText className="h-4 w-4 text-muted-foreground" />
-            </div>
-            <div className="mt-2">
-              <span className="text-3xl font-bold text-foreground">{REPORTS.filter(r => r.status === "Completed").length}</span>
-              <span className="text-xs text-muted-foreground ml-2">completed</span>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Next Milestone</p>
-              <Clock className="h-4 w-4 text-muted-foreground" />
-            </div>
-            <div className="mt-2">
-              <p className="text-sm font-medium text-foreground truncate">{nextMilestone?.title}</p>
-              <p className="text-xs text-muted-foreground mt-0.5">{nextMilestone?.date}</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Active Priorities */}
-        <div className="lg:col-span-2 space-y-4">
-          <Card>
-            <CardHeader className="pb-3">
+      {/* Summary cards */}
+      <motion.div variants={containerVars} initial="hidden" animate="show" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {summaryCards.map((card) => (
+          <motion.div key={card.label} variants={itemVars}>
+            <GlassCard className="p-5 flex flex-col gap-3 hover:border-white/[0.12] transition-all duration-300">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-lg" style={{ fontFamily: 'Inter, sans-serif' }}>Active Priorities</CardTitle>
-                <Link to="/client/action-plan" className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1">View all <ArrowRight className="h-3 w-3" /></Link>
+                <p className="text-[10px] font-mono uppercase tracking-widest text-slate-500">{card.label}</p>
+                <card.icon className="h-3.5 w-3.5 text-slate-600" />
               </div>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {activePriorities.map(item => (
-                <div key={item.id} className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-                  <div className="h-2 w-2 rounded-full mt-1.5 shrink-0" style={{ backgroundColor: `hsl(var(--pillar-${item.pillar}))` }} />
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-foreground">{item.title}</p>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-xs text-muted-foreground">{item.owner}</span>
-                      <span className="text-xs text-muted-foreground">· Due {item.dueDate}</span>
-                    </div>
-                  </div>
-                  <Badge variant="outline" className="text-[10px] shrink-0">{item.priority}</Badge>
+              {card.text ? (
+                <p className="text-sm font-medium text-white truncate leading-snug">{card.value}</p>
+              ) : (
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-3xl font-display font-light text-white tracking-tight">{card.value}</span>
+                  {card.sub && <span className="text-xs font-mono text-slate-500">{card.sub}</span>}
                 </div>
-              ))}
-            </CardContent>
-          </Card>
+              )}
+              {card.text && card.sub && <p className="text-xs font-mono text-slate-600">{card.sub}</p>}
+              {card.progress !== undefined && (
+                <div className="h-0.5 rounded-full bg-white/[0.06] overflow-hidden">
+                  <motion.div
+                    className="h-full rounded-full"
+                    style={{ backgroundColor: card.accent }}
+                    initial={{ width: 0 }}
+                    animate={{ width: `${card.progress}%` }}
+                    transition={{ delay: 0.6, duration: 0.8, ease: "easeOut" }}
+                  />
+                </div>
+              )}
+            </GlassCard>
+          </motion.div>
+        ))}
+      </motion.div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        {/* Left column */}
+        <div className="lg:col-span-2 space-y-5">
+          {/* Active Priorities */}
+          <GlassCard className="overflow-hidden">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.04]">
+              <SectionLabel>Active Priorities</SectionLabel>
+              <Link to="/client/action-plan" className="text-xs font-mono text-slate-600 hover:text-violet-400 transition-colors flex items-center gap-1">
+                View all <ArrowRight className="h-3 w-3" />
+              </Link>
+            </div>
+            <div className="p-4 space-y-2">
+              {activePriorities.map(item => {
+                const color = PILLAR_COLORS[item.pillar] ?? "#6D4AE6";
+                return (
+                  <div key={item.id} className="flex items-start gap-3 p-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.04] transition-colors">
+                    <div className="h-1.5 w-1.5 rounded-full mt-2 flex-shrink-0" style={{ backgroundColor: color, boxShadow: `0 0 6px ${color}80` }} />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm text-white leading-snug">{item.title}</p>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className="text-[10px] font-mono text-slate-600">{item.owner}</span>
+                        <span className="text-slate-700">·</span>
+                        <span className="text-[10px] font-mono text-slate-600">Due {item.dueDate}</span>
+                      </div>
+                    </div>
+                    <span
+                      className="flex-shrink-0 text-[9px] font-mono font-semibold px-2 py-0.5 rounded-full border"
+                      style={{ color, borderColor: `${color}40`, backgroundColor: `${color}15` }}
+                    >
+                      {item.priority}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </GlassCard>
 
           {/* KPI Snapshot */}
-          <Card>
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-lg" style={{ fontFamily: 'Inter, sans-serif' }}>KPI Snapshot</CardTitle>
-                <Link to="/client/kpis" className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1">Full dashboard <ArrowRight className="h-3 w-3" /></Link>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                {topKpis.map(kpi => (
-                  <div key={kpi.label} className="p-3 rounded-lg bg-muted/50">
-                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">{kpi.label}</p>
-                    <p className="text-xl font-bold text-foreground mt-1">{kpi.value}</p>
-                    <div className="flex items-center gap-1 mt-1">
-                      <ArrowUpRight className="h-3 w-3 text-status-success" />
-                      <span className="text-xs text-status-success">{kpi.change}</span>
+          <GlassCard className="overflow-hidden">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.04]">
+              <SectionLabel>KPI Snapshot</SectionLabel>
+              <Link to="/client/kpis" className="text-xs font-mono text-slate-600 hover:text-violet-400 transition-colors flex items-center gap-1">
+                Full dashboard <ArrowRight className="h-3 w-3" />
+              </Link>
+            </div>
+            <div className="p-4 grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {topKpis.map(kpi => {
+                const color = PILLAR_COLORS[kpi.pillar] ?? "#6D4AE6";
+                return (
+                  <div key={kpi.label} className="p-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.04] transition-colors">
+                    <p className="text-[9px] font-mono uppercase tracking-widest text-slate-600">{kpi.label}</p>
+                    <p className="text-xl font-display font-light mt-1" style={{ color }}>{kpi.value}</p>
+                    <div className="flex items-center gap-1 mt-0.5">
+                      <ArrowUpRight className="h-2.5 w-2.5 text-emerald-400" />
+                      <span className="text-[10px] font-mono text-emerald-400">{kpi.change}</span>
                     </div>
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+                );
+              })}
+            </div>
+          </GlassCard>
         </div>
 
-        {/* Right Column */}
-        <div className="space-y-4">
+        {/* Right column */}
+        <div className="space-y-5">
           {/* Pillar Focus */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg" style={{ fontFamily: 'Inter, sans-serif' }}>Pillar Focus</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {PILLARS.filter(p => ORGANIZATION.pillarFocus.includes(p.id)).map(p => (
-                <div key={p.id} className="flex items-center gap-3 p-2.5 rounded-lg bg-muted/50">
-                  <div className="h-3 w-3 rounded-full shrink-0" style={{ backgroundColor: `hsl(var(--pillar-${p.id}))` }} />
-                  <span className="text-sm text-foreground">{p.name}</span>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
+          <GlassCard className="overflow-hidden">
+            <div className="px-6 py-4 border-b border-white/[0.04]">
+              <SectionLabel>Pillar Focus</SectionLabel>
+            </div>
+            <div className="p-4 space-y-2">
+              {PILLARS.filter(p => ORGANIZATION.pillarFocus.includes(p.id)).map(p => {
+                const color = PILLAR_COLORS[p.id] ?? "#6D4AE6";
+                return (
+                  <div key={p.id} className="flex items-center gap-3 p-2.5 rounded-xl bg-white/[0.02]">
+                    <div className="h-2 w-2 rounded-full flex-shrink-0" style={{ backgroundColor: color, boxShadow: `0 0 6px ${color}80` }} />
+                    <span className="text-sm text-slate-300">{p.name}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </GlassCard>
 
           {/* Top Recommendations */}
-          <Card>
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-lg" style={{ fontFamily: 'Inter, sans-serif' }}>Top Recommendations</CardTitle>
-                <Lightbulb className="h-4 w-4 text-gold" />
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {topRecs.map(rec => (
-                <div key={rec.id} className="p-3 rounded-lg border bg-card">
-                  <p className="text-sm font-medium text-foreground leading-snug">{rec.title}</p>
-                  <div className="flex items-center gap-2 mt-2">
-                    <Badge variant="outline" className="text-[10px]">{rec.urgency}</Badge>
-                    <div className="h-2 w-2 rounded-full" style={{ backgroundColor: `hsl(var(--pillar-${rec.pillar}))` }} />
+          <GlassCard className="overflow-hidden">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.04]">
+              <SectionLabel>Recommendations</SectionLabel>
+              <Lightbulb className="h-3.5 w-3.5 text-amber-500/60" />
+            </div>
+            <div className="p-4 space-y-2">
+              {topRecs.map(rec => {
+                const color = PILLAR_COLORS[rec.pillar] ?? "#6D4AE6";
+                return (
+                  <div key={rec.id} className="p-3 rounded-xl border border-white/[0.04] bg-white/[0.01] hover:bg-white/[0.03] transition-colors">
+                    <p className="text-xs text-white leading-snug">{rec.title}</p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className={`text-[9px] font-mono font-semibold px-2 py-0.5 rounded-full border ${URGENCY_COLORS[rec.urgency] ?? ""}`}>
+                        {rec.urgency}
+                      </span>
+                      <div className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: color }} />
+                    </div>
                   </div>
-                </div>
-              ))}
-              <Link to="/client/recommendations" className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 pt-1">
-                All recommendations <ArrowRight className="h-3 w-3" />
+                );
+              })}
+              <Link to="/client/recommendations" className="text-[10px] font-mono text-slate-600 hover:text-violet-400 transition-colors flex items-center gap-1 pt-1">
+                All recommendations <ArrowRight className="h-2.5 w-2.5" />
               </Link>
-            </CardContent>
-          </Card>
-
-          {/* Latest Report */}
-          {latestReport && (
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg" style={{ fontFamily: 'Inter, sans-serif' }}>Latest Report</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="p-3 rounded-lg bg-muted/50">
-                  <p className="text-sm font-medium text-foreground">{latestReport.title}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{latestReport.date}</p>
-                  <p className="text-xs text-muted-foreground mt-2 leading-relaxed">{latestReport.findings}</p>
-                  <Link to="/client/reports" className="text-xs text-status-info hover:underline mt-2 inline-block">View reports →</Link>
-                </div>
-              </CardContent>
-            </Card>
-          )}
+            </div>
+          </GlassCard>
 
           {/* Quick Links */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg" style={{ fontFamily: 'Inter, sans-serif' }}>Quick Links</CardTitle>
-            </CardHeader>
-            <CardContent className="grid grid-cols-2 gap-2">
+          <GlassCard className="overflow-hidden">
+            <div className="px-6 py-4 border-b border-white/[0.04]">
+              <SectionLabel>Quick Links</SectionLabel>
+            </div>
+            <div className="p-4 grid grid-cols-2 gap-2">
               {[
-                { label: "Reports", to: "/reports", icon: FileText },
-                { label: "Action Plan", to: "/action-plan", icon: Map },
-                { label: "Documents", to: "/documents", icon: TrendingUp },
-                { label: "Timeline", to: "/timeline", icon: CalendarCheck },
+                { label: "Reports", to: "/client/reports", icon: FileText },
+                { label: "Action Plan", to: "/client/action-plan", icon: Map },
+                { label: "KPIs", to: "/client/kpis", icon: TrendingUp },
+                { label: "Timeline", to: "/client/timeline", icon: CalendarCheck },
               ].map(link => (
-                <Link key={link.to} to={link.to} className="flex items-center gap-2 p-2.5 rounded-lg bg-muted/50 hover:bg-accent text-sm text-foreground transition-colors">
-                  <link.icon className="h-3.5 w-3.5 text-muted-foreground" />
-                  {link.label}
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className="flex items-center gap-2 p-2.5 rounded-xl bg-white/[0.02] hover:bg-violet-500/10 hover:border-violet-500/20 border border-transparent text-sm text-slate-400 hover:text-white transition-all duration-200"
+                >
+                  <link.icon className="h-3.5 w-3.5 flex-shrink-0" />
+                  <span className="text-xs font-medium">{link.label}</span>
                 </Link>
               ))}
-            </CardContent>
-          </Card>
+            </div>
+          </GlassCard>
         </div>
       </div>
     </div>

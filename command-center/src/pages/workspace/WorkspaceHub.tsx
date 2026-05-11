@@ -1,35 +1,22 @@
-import React, { useState } from 'react';
-import { CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Briefcase, Target, TrendingUp, Plus, ArrowRight, Lock } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { UpgradeModal } from '@/components/UpgradeModal';
-import { HoverCard } from '@/components/HoverCard';
-import { PremiumBadge } from '@/components/PremiumBadge';
-import { motion } from 'framer-motion';
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Briefcase, TrendingUp, Plus, ArrowRight, Lock, Clock } from "lucide-react";
+import { Link } from "react-router-dom";
+import { UpgradeModal } from "@/components/UpgradeModal";
+import { PremiumBadge } from "@/components/PremiumBadge";
+import { PageHeader, SectionLabel } from "@/components/PageHeader";
+import { EmptyState } from "@/components/EmptyState";
+import { PremiumCard } from "@/components/PremiumCard";
 
 const ACTIVE_WORKSPACES = [
-  { 
-    id: 'wk-1', 
-    title: 'Q3 Outbound Engine', 
-    pillar: 'Customer Acquisition', 
-    type: 'Sequence Builder',
-    lastEdited: '2 hours ago',
-    progress: 40
-  }
+  { id: "wk-1", title: "Q3 Outbound Engine", pillar: "Customer Acquisition", color: "#378ADD", type: "Sequence Builder", lastEdited: "2 hours ago", progress: 40 },
 ];
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1 }
-  }
-};
+const TEMPLATES = ["Lite CRM", "Cold Email Sequence", "Offer Positioning Canvas", "Pricing Model", "Cash Flow Projector", "KPI Dashboard"];
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } }
+const cardVars = {
+  hidden: { opacity: 0, y: 14, filter: "blur(6px)" },
+  show: (i: number) => ({ opacity: 1, y: 0, filter: "blur(0px)", transition: { type: "spring", stiffness: 100, damping: 18, delay: i * 0.08 } }),
 };
 
 export default function WorkspaceHub() {
@@ -38,123 +25,124 @@ export default function WorkspaceHub() {
   const currentUsage = ACTIVE_WORKSPACES.length;
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-12 relative">
-      <div className="absolute inset-0 bg-skeletal-grid opacity-20 pointer-events-none -z-10" />
-      <UpgradeModal 
-        isOpen={showUpgrade} 
-        onClose={() => setShowUpgrade(false)} 
-        featureName="unlimited workspaces and premium templates"
-      />
+    <div className="max-w-7xl mx-auto space-y-10 pb-12">
+      <UpgradeModal isOpen={showUpgrade} onClose={() => setShowUpgrade(false)} featureName="unlimited workspaces and premium templates" />
 
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h1 className="text-4xl font-display font-bold flex items-center gap-3 mb-2">
-            <Briefcase className="w-8 h-8 text-indigo-500" /> 
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-indigo-400">Workspace</span>
-          </h1>
-          <p className="text-slate-400 text-lg">Your active execution environments. Turn frameworks into reality.</p>
-        </div>
-        <div className="flex items-center gap-4">
+      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-5">
+        <PageHeader
+          label="Execution Layer"
+          title="Workspace"
+          description="Your active execution environments. Turn frameworks into reality."
+        />
+        <div className="flex items-center gap-4 flex-shrink-0">
           <div className="text-right hidden sm:block">
-            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Free Limit</p>
-            <p className="text-sm text-slate-300 font-mono">{currentUsage} / {freeLimit} Canvases</p>
+            <p className="text-[10px] font-mono text-slate-600 uppercase tracking-widest">Free Limit</p>
+            <p className="text-sm text-slate-400 font-mono mt-0.5">{currentUsage} / {freeLimit} Canvases</p>
           </div>
-          <Button 
-            className="bg-indigo-600 hover:bg-indigo-500 text-white shadow-[0_0_20px_rgba(79,70,229,0.4)] hover:shadow-[0_0_30px_rgba(79,70,229,0.6)] active:scale-95 transition-all duration-200"
-            onClick={() => currentUsage >= freeLimit ? setShowUpgrade(true) : null}
+          <button
+            onClick={() => currentUsage >= freeLimit ? setShowUpgrade(true) : undefined}
+            className="flex items-center gap-2 h-10 px-5 rounded-full bg-white text-black text-sm font-medium hover:bg-slate-100 transition-all active:scale-95 shadow-[0_0_20px_rgba(255,255,255,0.1)]"
           >
-            <Plus className="w-4 h-4 mr-2" /> New Canvas
-          </Button>
+            <Plus className="w-4 h-4" /> New Canvas
+          </button>
         </div>
       </div>
 
-      <div className="space-y-8">
-        {/* Active Workspaces */}
-        <div>
-          <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-            <TrendingUp className="w-6 h-6 text-indigo-500" /> Recent Canvases
-          </h2>
-          <motion.div 
-            variants={containerVariants}
-            initial="hidden"
-            animate="show"
-            className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
-          >
-            {ACTIVE_WORKSPACES.map(workspace => (
-              <motion.div key={workspace.id} variants={itemVariants}>
-                <HoverCard className="group overflow-hidden relative h-full">
-                  <div className="absolute top-0 left-0 w-full h-1 bg-slate-800">
-                    <div className="h-full bg-indigo-500" style={{ width: `${workspace.progress}%` }} />
-                  </div>
-                  <CardHeader className="pb-3">
-                    <div className="flex justify-between items-start mb-2">
-                      <span className="text-xs font-semibold px-2 py-1 rounded bg-slate-800 text-slate-300">
-                        {workspace.type}
-                      </span>
-                      <span className="text-xs text-slate-500">
-                        Edited {workspace.lastEdited}
-                      </span>
-                    </div>
-                    <CardTitle className="text-xl group-hover:text-indigo-400 transition-colors">{workspace.title}</CardTitle>
-                    <CardDescription>{workspace.pillar}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <Link to={`/workspace/${workspace.id}`}>
-                      <Button variant="ghost" className="w-full text-slate-400 group-hover:text-white justify-between h-10 px-4 bg-white/5 rounded-md mt-4 relative z-20">
-                        <span>Open Canvas</span>
-                        <ArrowRight className="w-4 h-4 ml-1" />
-                      </Button>
-                    </Link>
-                  </CardContent>
-                </HoverCard>
-              </motion.div>
-            ))}
-            
-            {/* Upsell Card */}
-            <motion.div variants={itemVariants}>
-              <HoverCard 
-                className="border-dashed border-white/10 hover:border-indigo-500/30 cursor-pointer flex flex-col items-center justify-center text-center p-6 min-h-[200px]"
-                onClick={() => setShowUpgrade(true)}
-              >
-                <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center mb-4">
-                  <Lock className="w-5 h-5 text-slate-400" />
+      {/* Active canvases */}
+      <div>
+        <SectionLabel className="mb-5">Recent Canvases</SectionLabel>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {ACTIVE_WORKSPACES.map((ws, i) => (
+            <motion.div
+              key={ws.id}
+              custom={i}
+              variants={cardVars}
+              initial="hidden"
+              animate="show"
+            >
+              <PremiumCard glowColor={`${ws.color}1A`} className="group relative">
+                {/* Progress bar */}
+                <div className="absolute top-0 left-0 right-0 h-0.5 bg-white/[0.04]">
+                  <motion.div
+                    className="h-full"
+                    style={{ backgroundColor: ws.color }}
+                    initial={{ width: 0 }}
+                    animate={{ width: `${ws.progress}%` }}
+                    transition={{ delay: 0.5, duration: 0.8, ease: "easeOut" }}
+                  />
                 </div>
-                <h3 className="text-lg font-semibold text-slate-300 mb-2">Unlock Unlimited Workspaces</h3>
-                <p className="text-sm text-slate-500 max-w-[200px]">Scale your operations with unlimited custom canvases.</p>
-              </HoverCard>
+
+                <div className="p-5 pt-6 flex flex-col gap-4">
+                  <div className="flex items-center justify-between">
+                    <span
+                      className="text-[10px] font-mono font-semibold px-2.5 py-1 rounded-full border"
+                      style={{ color: ws.color, backgroundColor: `${ws.color}18`, borderColor: `${ws.color}30` }}
+                    >
+                      {ws.type}
+                    </span>
+                    <div className="flex items-center gap-1 text-[10px] font-mono text-slate-600">
+                      <Clock className="h-3 w-3" /> {ws.lastEdited}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-sm font-semibold text-white leading-snug group-hover:text-violet-200 transition-colors">{ws.title}</h3>
+                    <p className="text-xs text-slate-500 mt-1">{ws.pillar}</p>
+                  </div>
+
+                  <Link to={`/workspace/${ws.id}`}>
+                    <button className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.06] text-xs font-mono text-slate-400 hover:text-white transition-all duration-200">
+                      <span>Open Canvas</span>
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </button>
+                  </Link>
+                </div>
+              </PremiumCard>
             </motion.div>
+          ))}
+
+          {/* Add canvas slot */}
+          <motion.div custom={ACTIVE_WORKSPACES.length} variants={cardVars} initial="hidden" animate="show">
+            <button
+              onClick={() => setShowUpgrade(true)}
+              className="w-full h-full min-h-[180px] rounded-2xl border-2 border-dashed border-white/[0.07] hover:border-violet-500/30 flex flex-col items-center justify-center gap-3 text-center p-6 transition-all duration-300 group"
+            >
+              <div className="h-10 w-10 rounded-full bg-white/[0.04] border border-white/[0.08] flex items-center justify-center group-hover:border-violet-500/30 transition-colors">
+                <Lock className="h-4 w-4 text-slate-600 group-hover:text-violet-400 transition-colors" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-slate-400 group-hover:text-white transition-colors">Unlock Unlimited Canvases</p>
+                <p className="text-xs text-slate-600 mt-0.5">Upgrade to Pro</p>
+              </div>
+            </button>
           </motion.div>
         </div>
+      </div>
 
-        {/* Templates */}
-        <div className="pt-8 border-t border-white/5">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold">Start from a Template</h2>
-            <PremiumBadge>PRO TIER</PremiumBadge>
-          </div>
-          <motion.div 
-            variants={containerVariants}
-            initial="hidden"
-            animate="show"
-            className="grid md:grid-cols-3 gap-4"
-          >
-            {['Lite CRM', 'Cold Email Sequence', 'Offer Positioning Canvas', 'Pricing Model', 'Cash Flow Projector', 'KPI Dashboard'].map((template, i) => (
-              <motion.div key={i} variants={itemVariants}>
-                <HoverCard 
-                  onClick={() => setShowUpgrade(true)}
-                  className="p-4 cursor-pointer group flex items-center justify-between"
-                >
-                  <div className="relative z-20">
-                    <h4 className="font-semibold text-slate-300 group-hover:text-white flex items-center gap-2">
-                      {template}
-                    </h4>
-                    <p className="text-xs text-slate-500 mt-1">Premium Template</p>
-                  </div>
-                  <Lock className="w-4 h-4 text-slate-600 group-hover:text-indigo-400 relative z-20" />
-                </HoverCard>
-              </motion.div>
-            ))}
-          </motion.div>
+      {/* Templates */}
+      <div className="pt-2 border-t border-white/[0.04]">
+        <div className="flex items-center justify-between mb-5">
+          <SectionLabel>Start from a Template</SectionLabel>
+          <PremiumBadge className="text-[9px]">PRO TIER</PremiumBadge>
+        </div>
+        <div className="grid md:grid-cols-3 gap-3">
+          {TEMPLATES.map((template, i) => (
+            <motion.button
+              key={i}
+              custom={i}
+              variants={cardVars}
+              initial="hidden"
+              animate="show"
+              onClick={() => setShowUpgrade(true)}
+              className="group flex items-center justify-between p-4 rounded-xl border border-white/[0.06] bg-black/30 hover:bg-white/[0.03] hover:border-white/[0.10] transition-all duration-200"
+            >
+              <div className="text-left">
+                <p className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">{template}</p>
+                <p className="text-[10px] font-mono text-slate-600 mt-0.5">Premium Template</p>
+              </div>
+              <Lock className="h-3.5 w-3.5 text-slate-600 group-hover:text-violet-400 transition-colors flex-shrink-0" />
+            </motion.button>
+          ))}
         </div>
       </div>
     </div>

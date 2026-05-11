@@ -1,138 +1,158 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Search, Filter, BookOpen, Clock, PlayCircle, Star, ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Search, BookOpen, Clock, PlayCircle, Star, ArrowRight, Filter } from "lucide-react";
+import { Link } from "react-router-dom";
+import { PageHeader, SectionLabel } from "@/components/PageHeader";
+import { EmptyState } from "@/components/EmptyState";
+import { PremiumCard } from "@/components/PremiumCard";
 
 const MOCK_LIBRARY = [
-  { id: 'sop-1', title: 'The Perfect Sales Script Template', pillar: 'Sales & Conversion', type: 'SOP', time: '15 min read', popular: true },
-  { id: 'sop-2', title: 'Objection Handling Matrix', pillar: 'Sales & Conversion', type: 'Framework', time: '10 min read', popular: false },
-  { id: 'sop-3', title: 'LinkedIn Outbound System', pillar: 'Customer Acquisition', type: 'Learning', time: '4 weeks', popular: true },
-  { id: 'sop-4', title: 'Offer Clarity Audit', pillar: 'Market & Offer', type: 'Framework', time: '5 min', popular: false },
+  { id: "sop-1", title: "The Perfect Sales Script Template", pillar: "Sales & Conversion", color: "#1D9E75", type: "SOP",       time: "15 min read", popular: true },
+  { id: "sop-2", title: "Objection Handling Matrix",         pillar: "Sales & Conversion", color: "#1D9E75", type: "Framework",  time: "10 min read", popular: false },
+  { id: "sop-3", title: "LinkedIn Outbound System",          pillar: "Customer Acquisition",color:"#378ADD", type: "Learning",   time: "4 weeks",     popular: true },
+  { id: "sop-4", title: "Offer Clarity Audit",               pillar: "Market & Offer",      color: "#6D4AE6", type: "Framework", time: "5 min",       popular: false },
 ];
 
-export default function LibraryHub({ category = 'All' }: { category?: 'Learnings' | 'SOPs' | 'Frameworks' | 'All' }) {
-  const [searchTerm, setSearchTerm] = useState('');
+const TYPE_BADGE: Record<string, { text: string; bg: string; border: string }> = {
+  SOP:       { text: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/20" },
+  Framework: { text: "text-violet-400",  bg: "bg-violet-500/10",  border: "border-violet-500/20"  },
+  Learning:  { text: "text-sky-400",     bg: "bg-sky-500/10",     border: "border-sky-500/20"     },
+  Playbook:  { text: "text-amber-400",   bg: "bg-amber-500/10",   border: "border-amber-500/20"   },
+};
 
-  // Map category to type string
+const cardVars = {
+  hidden: { opacity: 0, y: 14, filter: "blur(6px)" },
+  show: (i: number) => ({ opacity: 1, y: 0, filter: "blur(0px)", transition: { type: "spring", stiffness: 100, damping: 18, delay: i * 0.07 } }),
+};
+
+export default function LibraryHub({ category = "All" }: { category?: "Learnings" | "SOPs" | "Frameworks" | "Playbooks" | "All" }) {
+  const [searchTerm, setSearchTerm] = useState("");
+
   const categoryToTypeMap: Record<string, string[]> = {
-    'Learnings': ['Learning'],
-    'SOPs': ['SOP'],
-    'Frameworks': ['Framework'],
-    'All': ['SOP', 'Framework', 'Learning']
+    Learnings:  ["Learning"],
+    SOPs:       ["SOP"],
+    Frameworks: ["Framework"],
+    Playbooks:  ["Playbook", "SOP"],
+    All:        ["SOP", "Framework", "Learning", "Playbook"],
   };
 
-  const allowedTypes = categoryToTypeMap[category] || categoryToTypeMap['All'];
-
-  const filteredItems = MOCK_LIBRARY.filter(item => 
-    allowedTypes.includes(item.type) && 
-    (item.title.toLowerCase().includes(searchTerm.toLowerCase()) || item.pillar.toLowerCase().includes(searchTerm.toLowerCase()))
+  const allowedTypes = categoryToTypeMap[category] ?? categoryToTypeMap.All;
+  const filteredItems = MOCK_LIBRARY.filter(
+    item => allowedTypes.includes(item.type) &&
+      (item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+       item.pillar.toLowerCase().includes(searchTerm.toLowerCase()))
   );
+  const popular = filteredItems.filter(i => i.popular);
+  const rest = filteredItems.filter(i => !i.popular);
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-12">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h1 className="text-4xl font-display font-bold mb-2">
-            {category === 'All' ? 'Growth Library' : category}
-          </h1>
-          <p className="text-slate-400 text-lg">Your repository of playbooks, templates, and frameworks.</p>
-        </div>
-        <div className="flex gap-2">
-          <Link to="/library/saved">
-            <Button variant="outline" className="border-white/10 hover:bg-white/5">
-              <Star className="w-4 h-4 mr-2" /> Saved Items
-            </Button>
-          </Link>
-        </div>
+    <div className="max-w-7xl mx-auto space-y-10 pb-12">
+      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-5">
+        <PageHeader
+          label="Knowledge Base"
+          title={category === "All" ? "Growth Library" : category}
+          description="Your repository of playbooks, templates, and frameworks."
+        />
+        <Link to="/library/saved" className="flex-shrink-0 self-start md:self-end">
+          <button className="flex items-center gap-2 h-9 px-4 rounded-xl border border-white/[0.08] bg-white/[0.03] text-xs font-mono text-slate-400 hover:text-white hover:border-white/[0.14] transition-all">
+            <Star className="h-3.5 w-3.5" /> Saved Items
+          </button>
+        </Link>
       </div>
 
-      {/* Filters and Search */}
-      <div className="flex flex-col md:flex-row gap-4 bg-slate-900/50 p-4 rounded-xl border border-white/5">
+      {/* Search bar */}
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
+      <PremiumCard glowColor="rgba(255,255,255,0.04)" className="flex gap-3 p-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
-          <Input 
-            placeholder={`Search ${category.toLowerCase()}...`}
-            className="pl-10 h-12 bg-slate-800/50 border-white/10 text-white"
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-600" />
+          <input
+            placeholder={`Search ${category === "All" ? "resources" : category.toLowerCase()}...`}
+            className="w-full h-10 pl-9 pr-4 bg-white/[0.04] border border-white/[0.06] rounded-xl text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-violet-500/30 focus:bg-white/[0.06] transition-all font-display"
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={e => setSearchTerm(e.target.value)}
           />
         </div>
-        <Button variant="outline" className="h-12 border-white/10 hover:bg-white/5 shrink-0">
-          <Filter className="w-4 h-4 mr-2" /> All Pillars
-        </Button>
-      </div>
+        <button className="flex items-center gap-2 h-10 px-4 rounded-xl border border-white/[0.06] bg-white/[0.02] text-xs font-mono text-slate-500 hover:text-white transition-colors flex-shrink-0">
+          <Filter className="h-3.5 w-3.5" /> All Pillars
+        </button>
+      </PremiumCard>
+      </motion.div>
 
-      {/* Pinned / Recommended */}
-      {filteredItems.filter(item => item.popular).length > 0 && (
+      {/* Recommended */}
+      {popular.length > 0 && (
         <div>
-          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-            <Star className="w-5 h-5 text-amber-500" /> Recommended {category === 'All' ? 'For You' : category}
-          </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {filteredItems.filter(item => item.popular).map((item) => (
-              <Card key={item.id} className="bg-gradient-to-br from-slate-900 to-slate-800 border-white/10 hover:border-primary/50 transition-all group overflow-hidden">
-                <div className="h-2 w-full bg-gradient-to-r from-primary to-purple-500" />
-                <CardHeader className="pb-3">
-                  <div className="flex justify-between items-start mb-2">
-                    <span className="text-xs font-semibold px-2 py-1 rounded bg-slate-800 text-slate-300">
-                      {item.type}
-                    </span>
-                    <div className="flex items-center text-xs text-slate-400">
-                      {item.type === 'Learning' ? <PlayCircle className="w-3 h-3 mr-1" /> : <Clock className="w-3 h-3 mr-1" />}
-                      {item.time}
+          <SectionLabel className="mb-5">
+            <Star className="h-3 w-3 inline mr-1.5 text-amber-500/60" />
+            Recommended {category === "All" ? "For You" : category}
+          </SectionLabel>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {popular.map((item, i) => {
+              const badge = TYPE_BADGE[item.type] ?? TYPE_BADGE.SOP;
+              return (
+                <motion.div key={item.id} custom={i} variants={cardVars} initial="hidden" animate="show">
+                  <PremiumCard glowColor={`${item.color}1A`} className="group relative">
+                    <div className="h-0.5 w-full" style={{ background: `linear-gradient(to right, ${item.color}80, transparent)` }} />
+                    <div className="p-5 flex flex-col gap-3">
+                      <div className="flex items-center justify-between">
+                        <span className={`text-[10px] font-mono font-semibold px-2.5 py-1 rounded-full border ${badge.text} ${badge.bg} ${badge.border}`}>{item.type}</span>
+                        <span className="text-[10px] font-mono text-slate-600 flex items-center gap-1">
+                          {item.type === "Learning" ? <PlayCircle className="h-3 w-3" /> : <Clock className="h-3 w-3" />} {item.time}
+                        </span>
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-white leading-snug group-hover:text-violet-200 transition-colors">{item.title}</p>
+                        <p className="text-[10px] font-mono text-slate-600 mt-1">{item.pillar}</p>
+                      </div>
+                      <Link to={`/library/${item.id}`}>
+                        <button className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-white/[0.03] border border-white/[0.05] hover:bg-white/[0.07] text-xs font-mono text-slate-500 hover:text-white transition-all">
+                          <span>Open</span><ArrowRight className="h-3 w-3" />
+                        </button>
+                      </Link>
                     </div>
-                  </div>
-                  <CardTitle className="text-lg leading-tight group-hover:text-primary transition-colors">{item.title}</CardTitle>
-                  <CardDescription className="text-xs">{item.pillar}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Link to={`/library/${item.id}`}>
-                    <Button variant="ghost" className="w-full text-slate-300 group-hover:text-white p-0 justify-end h-auto mt-2">
-                      Open <ArrowRight className="w-4 h-4 ml-1" />
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
-            ))}
+                  </PremiumCard>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       )}
 
-      {/* All Entries Grid */}
+      {/* All resources */}
       <div>
-        <h2 className="text-xl font-bold mb-4">All {category === 'All' ? 'Resources' : category}</h2>
+        <SectionLabel className="mb-5">All {category === "All" ? "Resources" : category} — {filteredItems.length} items</SectionLabel>
         {filteredItems.length === 0 ? (
-          <div className="text-center p-12 bg-slate-900/50 border border-white/5 rounded-xl text-slate-400">
-            No {category.toLowerCase()} found matching your criteria.
-          </div>
+          <EmptyState
+            icons={[BookOpen, Search, Star]}
+            title="No resources found"
+            description={`No ${category.toLowerCase()} matching your search criteria.`}
+            action={{ label: "Clear search", onClick: () => setSearchTerm("") }}
+          />
         ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredItems.map((item) => (
-              <Card key={item.id} className="bg-slate-900/50 border-white/5 hover:border-white/20 transition-all group">
-                <CardHeader className="pb-3">
-                  <div className="flex justify-between items-start mb-2">
-                    <span className="text-xs font-semibold px-2 py-1 rounded bg-slate-800 text-slate-300">
-                      {item.type}
-                    </span>
-                    <div className="flex items-center text-xs text-slate-400">
-                      <Clock className="w-3 h-3 mr-1" /> {item.time}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredItems.map((item, i) => {
+              const badge = TYPE_BADGE[item.type] ?? TYPE_BADGE.SOP;
+              return (
+                <motion.div key={item.id} custom={i + popular.length} variants={cardVars} initial="hidden" animate="show">
+                  <PremiumCard glowColor={`${item.color}1A`} className="group flex flex-col">
+                    <div className="p-5 flex flex-col gap-4 flex-1">
+                      <div className="flex items-center justify-between">
+                        <span className={`text-[10px] font-mono font-semibold px-2.5 py-1 rounded-full border ${badge.text} ${badge.bg} ${badge.border}`}>{item.type}</span>
+                        <span className="text-[10px] font-mono text-slate-600 flex items-center gap-1"><Clock className="h-3 w-3" /> {item.time}</span>
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-semibold text-white leading-snug group-hover:text-violet-200 transition-colors">{item.title}</p>
+                        <p className="text-[10px] font-mono text-slate-600 mt-1">{item.pillar}</p>
+                      </div>
+                      <Link to={`/library/${item.id}`}>
+                        <button className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.05] hover:bg-white/[0.06] text-xs font-mono text-slate-400 hover:text-white transition-all">
+                          <span>View Resource</span><ArrowRight className="h-3.5 w-3.5" />
+                        </button>
+                      </Link>
                     </div>
-                  </div>
-                  <CardTitle className="text-lg group-hover:text-primary transition-colors">{item.title}</CardTitle>
-                  <CardDescription>{item.pillar}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Link to={`/library/${item.id}`}>
-                    <Button variant="ghost" className="w-full text-slate-400 group-hover:text-white justify-between h-10 px-0 bg-white/5 px-4 rounded-md">
-                      <span>View Resource</span>
-                      <ArrowRight className="w-4 h-4 ml-1" />
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
-            ))}
+                  </PremiumCard>
+                </motion.div>
+              );
+            })}
           </div>
         )}
       </div>

@@ -1,48 +1,28 @@
-import { motion } from 'framer-motion';
+export const AnimatedBackground = () => (
+  <div className="fixed inset-0 pointer-events-none z-[-2] bg-[#050505]">
+    {/* Static radial base — no animation, no flicker */}
+    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[100vw] h-[100vh] bg-[radial-gradient(ellipse_at_center,rgba(109,74,230,0.07),transparent_65%)]" />
 
-export const AnimatedBackground = () => {
-  return (
-    <div className="fixed inset-0 overflow-hidden pointer-events-none z-[-2] bg-[#050505]">
-      {/* Deep Violet Base Glow */}
-      <motion.div
-        animate={{
-          scale: [1, 1.1, 1],
-          opacity: [0.08, 0.12, 0.08],
-        }}
-        transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120vw] h-[120vh] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-violet-900/20 via-background to-background blur-[100px]"
-      />
+    {/* Orb 1 — violet, pure CSS so no React re-renders */}
+    <div
+      className="absolute rounded-full blur-[160px] orb-float-1"
+      style={{ top: "-20%", left: "-10%", width: "50vw", height: "50vw", background: "rgba(109,74,230,0.07)" }}
+    />
 
-      {/* Dynamic Orbs - Much more subtle now */}
-      <motion.div
-        animate={{
-          x: [0, 100, 0],
-          y: [0, -50, 0],
-          opacity: [0.05, 0.08, 0.05],
-        }}
-        transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-        className="absolute top-[-20%] left-[-10%] w-[50vw] h-[50vw] bg-violet-600 rounded-full blur-[160px]"
-      />
+    {/* Orb 2 — purple/fuchsia blend */}
+    <div
+      className="absolute rounded-full blur-[180px] orb-float-2"
+      style={{ bottom: "-20%", right: "-10%", width: "60vw", height: "60vw", background: "rgba(139,43,196,0.04)" }}
+    />
 
-      <motion.div
-        animate={{
-          x: [0, -80, 0],
-          y: [0, 80, 0],
-          opacity: [0.03, 0.06, 0.03],
-        }}
-        transition={{ duration: 30, repeat: Infinity, ease: "linear", delay: 2 }}
-        className="absolute bottom-[-20%] right-[-10%] w-[60vw] h-[60vw] bg-cyan-600 rounded-full blur-[180px]"
-      />
-
-      {/* Ultra-fine grid overlay */}
-      <div
-        className="absolute inset-0 z-[-1] opacity-[0.15]"
-        style={{
-          backgroundImage: `linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px)`,
-          backgroundSize: '40px 40px',
-          maskImage: 'radial-gradient(circle at center, black, transparent 80%)'
-        }}
-      />
-    </div>
-  );
-};
+    {/* Subtle grid */}
+    <div
+      className="absolute inset-0 opacity-[0.025]"
+      style={{
+        backgroundImage: "linear-gradient(to right,rgba(255,255,255,0.08) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,0.08) 1px,transparent 1px)",
+        backgroundSize: "40px 40px",
+        maskImage: "radial-gradient(circle at 50% 40%, black 10%, transparent 75%)",
+      }}
+    />
+  </div>
+);

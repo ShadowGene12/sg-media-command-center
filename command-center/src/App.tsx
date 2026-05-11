@@ -1,4 +1,5 @@
 import React, { Suspense } from "react";
+import { PageSkeleton } from "./components/PageSkeleton";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -94,13 +95,13 @@ const queryClient = new QueryClient();
 const CommandCenterLayout = () => {
   const location = useLocation();
   return (
-    <div className="flex min-h-screen w-full bg-transparent relative overflow-hidden">
+    <div className="flex h-screen w-full bg-transparent overflow-hidden">
       <AnimatedBackground />
       <CommandPalette />
       <AppSidebar />
-      <div className="flex flex-col flex-1 min-w-0 z-10">
+      <div className="flex flex-col flex-1 min-w-0 z-10 overflow-hidden">
         <AppHeader />
-        <main className="flex-1 overflow-auto p-4 md:p-8 relative">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-8 relative">
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}
@@ -110,7 +111,7 @@ const CommandCenterLayout = () => {
               transition={{ duration: 0.4, type: "spring", bounce: 0, ease: "circOut" }}
               className="w-full h-full"
             >
-              <Suspense fallback={<PageLoader />}>
+              <Suspense fallback={<PageSkeleton />}>
                 <Outlet />
               </Suspense>
             </motion.div>

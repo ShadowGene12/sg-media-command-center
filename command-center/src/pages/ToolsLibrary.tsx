@@ -1,118 +1,140 @@
+import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { BarChart3, Target, Wrench, BookOpen, Calculator, Search, TrendingUp, FileText } from "lucide-react";
+import { BarChart3, Target, Wrench, Calculator, Search, TrendingUp, FileText, Clock, ArrowRight, Lock } from "lucide-react";
+import { PageHeader, SectionLabel } from "@/components/PageHeader";
 
 const TOOL_GROUPS = [
   {
-    pillar: "Market & Offer",
-    color: "#6D4AE6",
+    pillar: "Market & Offer", color: "#6D4AE6",
     tools: [
-      { name: "Offer Clarity Audit", icon: Target, desc: "Score your offer against 12 clarity markers", lastRun: "3 days ago" },
-      { name: "Positioning Analyzer", icon: Search, desc: "Map your positioning vs competitors", lastRun: null },
-      { name: "ICP Builder", icon: FileText, desc: "Build your ideal customer profile step-by-step", lastRun: null },
-    ]
+      { name: "Offer Clarity Audit",    icon: Target,    desc: "Score your offer against 12 clarity markers",      lastRun: "3 days ago", route: null },
+      { name: "Positioning Analyzer",   icon: Search,    desc: "Map your positioning vs competitors",               lastRun: null,         route: null },
+      { name: "ICP Builder",            icon: FileText,  desc: "Build your ideal customer profile step-by-step",    lastRun: null,         route: null },
+    ],
   },
   {
-    pillar: "Customer Acquisition",
-    color: "#378ADD",
+    pillar: "Customer Acquisition", color: "#378ADD",
     tools: [
-      { name: "Funnel Mapper", icon: TrendingUp, desc: "Visualize your acquisition funnel end-to-end", lastRun: null },
-      { name: "Channel Cost Calculator", icon: Calculator, desc: "Calculate true cost per channel", lastRun: "1 week ago" },
-    ]
+      { name: "Funnel Mapper",           icon: TrendingUp, desc: "Visualize your acquisition funnel end-to-end", lastRun: null,          route: null },
+      { name: "Channel Cost Calculator", icon: Calculator, desc: "Calculate true cost per channel",              lastRun: "1 week ago",  route: null },
+    ],
   },
   {
-    pillar: "Sales & Conversion",
-    color: "#1D9E75",
+    pillar: "Sales & Conversion", color: "#1D9E75",
     tools: [
-      { name: "Sales Process Auditor", icon: Wrench, desc: "Audit your sales process maturity", lastRun: null },
-      { name: "Objection Mapper", icon: Target, desc: "Document and script objection responses", lastRun: null },
-    ]
+      { name: "Sales Process Auditor", icon: Wrench, desc: "Audit your sales process maturity",        lastRun: null, route: null },
+      { name: "Objection Mapper",      icon: Target, desc: "Document and script objection responses",  lastRun: null, route: null },
+    ],
   },
   {
-    pillar: "Profit Optimization",
-    color: "#F59E0B",
+    pillar: "Profit Optimization", color: "#F59E0B",
     tools: [
-      { name: "Profit Calculator", icon: Calculator, desc: "Model margins and find hidden profit leaks", lastRun: "2 days ago" },
-      { name: "Pricing Diagnostic", icon: BarChart3, desc: "Evaluate pricing power and elasticity", lastRun: null },
-    ]
+      { name: "Profit Calculator",  icon: Calculator, desc: "Model margins and find hidden profit leaks",       lastRun: "2 days ago", route: "/tools/profit-calculator" },
+      { name: "Pricing Diagnostic", icon: BarChart3,  desc: "Evaluate pricing power and elasticity",            lastRun: null,         route: null },
+    ],
   },
   {
-    pillar: "Financial Control",
-    color: "#D85A30",
+    pillar: "Financial Control", color: "#D85A30",
     tools: [
-      { name: "KPI Tracker Template", icon: BarChart3, desc: "Set up your core KPI dashboard", lastRun: null },
-      { name: "Cash Flow Scanner", icon: TrendingUp, desc: "Analyze 90-day cash flow projections", lastRun: null },
-    ]
+      { name: "KPI Tracker Template", icon: BarChart3,   desc: "Set up your core KPI dashboard",              lastRun: null, route: null },
+      { name: "Cash Flow Scanner",    icon: TrendingUp,  desc: "Analyze 90-day cash flow projections",         lastRun: null, route: null },
+    ],
   },
 ];
 
+const cardVars = {
+  hidden: { opacity: 0, y: 12, filter: "blur(4px)" },
+  show: (i: number) => ({ opacity: 1, y: 0, filter: "blur(0px)", transition: { type: "spring", stiffness: 100, damping: 18, delay: i * 0.06 } }),
+};
+
 const ToolsLibrary = () => {
-  // Recently used tools
   const recentTools = TOOL_GROUPS.flatMap(g => g.tools.filter(t => t.lastRun).map(t => ({ ...t, pillar: g.pillar, color: g.color })));
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8">
-      <div>
-        <h1 className="text-3xl font-display font-bold">Tools</h1>
-        <p className="text-muted-foreground mt-1">Interactive tools and calculators for every growth pillar.</p>
-      </div>
+    <div className="max-w-6xl mx-auto space-y-10 pb-12">
+      <PageHeader
+        label="Execution Layer"
+        title="Tools"
+        description="Interactive tools and calculators for every growth pillar."
+      />
 
       {/* Recently used */}
       {recentTools.length > 0 && (
         <div>
-          <h2 className="text-sm font-mono text-muted-foreground uppercase tracking-widest mb-4">Recently Used</h2>
-          <div className="flex gap-4 overflow-x-auto pb-2 snap-x">
-            {recentTools.map((tool) => (
-              <div key={tool.name} className="min-w-[260px] flex-shrink-0 snap-start bg-card/30 backdrop-blur-xl border border-white/5 rounded-2xl p-5 hover:bg-card/50 hover:border-white/20 transition-all duration-300 cursor-pointer">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="h-10 w-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${tool.color}15` }}>
-                    <tool.icon className="h-5 w-5" style={{ color: tool.color }} />
+          <SectionLabel className="mb-4">Recently Used</SectionLabel>
+          <div className="flex gap-3 overflow-x-auto pb-2 snap-x">
+            {recentTools.map((tool, i) => (
+              <motion.div key={tool.name} custom={i} variants={cardVars} initial="hidden" animate="show"
+                className="min-w-[240px] flex-shrink-0 snap-start rounded-xl border border-white/[0.06] bg-black/40 backdrop-blur-md p-4 hover:border-white/[0.12] transition-all duration-300 group cursor-pointer">
+                <div className="flex items-center gap-3">
+                  <div className="h-9 w-9 rounded-xl flex items-center justify-center flex-shrink-0 border"
+                    style={{ backgroundColor: `${tool.color}15`, borderColor: `${tool.color}30` }}>
+                    <tool.icon className="h-4 w-4" style={{ color: tool.color }} />
                   </div>
                   <div>
-                    <h4 className="text-sm font-semibold text-foreground">{tool.name}</h4>
-                    <p className="text-xs text-muted-foreground font-mono">{tool.lastRun}</p>
+                    <p className="text-sm font-medium text-white group-hover:text-violet-200 transition-colors">{tool.name}</p>
+                    <p className="text-[10px] font-mono text-slate-600 mt-0.5">{tool.lastRun}</p>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
       )}
 
-      {/* All tools grouped by pillar */}
-      {TOOL_GROUPS.map((group) => (
-        <div key={group.pillar}>
-          <h2 className="text-sm font-semibold uppercase tracking-wider mb-3 flex items-center gap-2">
-            <div className="h-2 w-2 rounded-full shadow-[0_0_10px_rgba(255,255,255,0.5)]" style={{ backgroundColor: group.color }} />
-            {group.pillar}
-          </h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {group.tools.map((tool) => {
-              const isProfitCalc = tool.name === "Profit Calculator";
-              const Wrapper = isProfitCalc ? Link : 'div';
-              const props = isProfitCalc ? { to: "/tools/profit-calculator" } : {};
-              
-              return (
-                <Wrapper 
-                  {...props}
-                  key={tool.name} 
-                  className="bg-card/30 backdrop-blur-xl border border-white/5 rounded-2xl p-5 hover:bg-card/50 hover:border-white/20 hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-500 cursor-pointer group relative overflow-hidden"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <div className="h-10 w-10 rounded-xl flex items-center justify-center mb-4 relative z-10" style={{ backgroundColor: `${group.color}15` }}>
-                    <tool.icon className="h-5 w-5" style={{ color: group.color }} />
-                  </div>
-                  <h3 className="text-sm font-semibold mb-1 relative z-10 text-foreground">{tool.name}</h3>
-                  <p className="text-xs text-muted-foreground mb-4 relative z-10">{tool.desc}</p>
-                  <Button size="sm" variant="outline" className="opacity-0 group-hover:opacity-100 transition-opacity relative z-10 bg-black/20 backdrop-blur border-white/10 hover:bg-white/10 hover:text-white">
-                    {isProfitCalc ? "Launch tool →" : "Coming soon"}
-                  </Button>
-                </Wrapper>
-              );
-            })}
-          </div>
-        </div>
-      ))}
+      {/* Grouped by pillar */}
+      <div className="space-y-8">
+        {TOOL_GROUPS.map((group, gi) => (
+          <motion.div key={group.pillar}
+            initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 + gi * 0.07, type: "spring", stiffness: 100, damping: 18 }}>
+            <div className="flex items-center gap-2.5 mb-4">
+              <div className="h-2 w-2 rounded-full flex-shrink-0"
+                style={{ backgroundColor: group.color, boxShadow: `0 0 6px ${group.color}80` }} />
+              <SectionLabel>{group.pillar}</SectionLabel>
+            </div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {group.tools.map((tool, ti) => {
+                const isLive = !!tool.route;
+                const Wrapper = isLive ? Link : "div";
+                const wrapperProps = isLive ? { to: tool.route! } : {};
+                return (
+                  <Wrapper key={tool.name} {...(wrapperProps as any)}
+                    className="group relative rounded-2xl border border-white/[0.06] bg-black/40 backdrop-blur-md p-5 hover:border-white/[0.12] overflow-hidden transition-all duration-300 cursor-pointer flex flex-col gap-4"
+                  >
+                    {/* Hover gradient bleed */}
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none"
+                      style={{ background: `radial-gradient(circle at 0% 0%, ${group.color}08, transparent 70%)` }} />
+
+                    <div className="relative z-10 h-10 w-10 rounded-xl flex items-center justify-center border"
+                      style={{ backgroundColor: `${group.color}15`, borderColor: `${group.color}30` }}>
+                      <tool.icon className="h-4 w-4" style={{ color: group.color }} />
+                    </div>
+
+                    <div className="relative z-10 flex-1">
+                      <p className="text-sm font-semibold text-white group-hover:text-violet-100 transition-colors leading-snug">{tool.name}</p>
+                      <p className="text-xs text-slate-500 mt-1 leading-relaxed">{tool.desc}</p>
+                    </div>
+
+                    <div className="relative z-10 flex items-center justify-between">
+                      {tool.lastRun && <span className="text-[10px] font-mono text-slate-600 flex items-center gap-1"><Clock className="h-3 w-3" />{tool.lastRun}</span>}
+                      {isLive ? (
+                        <button className="flex items-center gap-1.5 text-xs font-mono text-slate-400 group-hover:text-white transition-colors ml-auto">
+                          Launch <ArrowRight className="h-3 w-3" />
+                        </button>
+                      ) : (
+                        <span className="flex items-center gap-1.5 text-[10px] font-mono text-slate-700 ml-auto">
+                          <Lock className="h-3 w-3" /> Coming soon
+                        </span>
+                      )}
+                    </div>
+                  </Wrapper>
+                );
+              })}
+            </div>
+          </motion.div>
+        ))}
+      </div>
     </div>
   );
 };

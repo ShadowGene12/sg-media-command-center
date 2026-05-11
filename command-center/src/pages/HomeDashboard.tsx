@@ -1,10 +1,51 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Activity, Target, ArrowRight, CheckCircle2, Clock, Sparkles } from "lucide-react";
+import { Activity, Target, ArrowRight, CheckCircle2, Sparkles } from "lucide-react";
 import { useCommandStore } from "@/lib/store";
 import { motion } from "framer-motion";
 import { useOnboarding } from "@/lib/useOnboarding";
 import { PremiumCard } from "@/components/PremiumCard";
+
+const CircularGauge = ({ value, max }: { value: number; max: number }) => {
+  const r = 52;
+  const cx = 60;
+  const cy = 60;
+  const circumference = 2 * Math.PI * r;
+  const pct = Math.min(value / max, 1);
+  const offset = circumference * (1 - pct);
+
+  return (
+    <div className="relative w-32 h-32 flex items-center justify-center">
+      <svg width="120" height="120" viewBox="0 0 120 120" className="-rotate-90">
+        {/* Track */}
+        <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="6" />
+        {/* Value arc */}
+        <motion.circle
+          cx={cx} cy={cy} r={r}
+          fill="none"
+          stroke="url(#gaugeGrad)"
+          strokeWidth="6"
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          initial={{ strokeDashoffset: circumference }}
+          animate={{ strokeDashoffset: offset }}
+          transition={{ duration: 1.4, ease: "easeOut", delay: 0.5 }}
+        />
+        <defs>
+          <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#6D4AE6" />
+            <stop offset="100%" stopColor="#00D2FF" />
+          </linearGradient>
+        </defs>
+      </svg>
+      {/* Center label */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <span className="text-3xl font-display font-light text-white tracking-tighter">{value.toFixed(1)}</span>
+        <span className="text-[10px] font-mono text-slate-600">/ {max}</span>
+      </div>
+    </div>
+  );
+};
 
 const TypewriterText = ({ text }: { text: string }) => {
   return (
@@ -100,7 +141,7 @@ const HomeDashboard = () => {
 
             <div className="relative z-10 mt-8">
               <Link to="/workspace/wk-1">
-                <Button className="bg-white hover:bg-slate-100 text-black rounded-full px-8 h-12 font-medium transition-transform active:scale-95 group-hover:shadow-[0_0_30px_rgba(255,255,255,0.15)]">
+                <Button className="bg-white hover:bg-white/95 text-black rounded-full px-8 h-12 font-medium transition-all active:scale-95 shadow-[0_0_20px_rgba(255,255,255,0.08)] hover:shadow-[0_0_32px_rgba(255,255,255,0.20)]">
                   Enter Workspace <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </Link>
@@ -111,18 +152,15 @@ const HomeDashboard = () => {
         {/* Growth Score / Metrics - Narrow column */}
         <motion.div variants={itemVars} className="md:col-span-4 flex flex-col gap-6">
           <PremiumCard glowColor="rgba(0, 210, 255, 0.08)" className="p-8 flex-1 flex flex-col justify-center items-center text-center">
-            <p className="text-sm font-mono text-slate-400 uppercase tracking-widest mb-4">System Score</p>
-            <div className="flex items-baseline justify-center gap-2 mb-2">
-              <span className="text-6xl font-display font-light text-white tracking-tighter">
-                {overallScore.toFixed(1)}
-              </span>
-            </div>
-            <p className="text-xs text-slate-500">Trailing 30 days</p>
-            
-            {/* Subtle sparkline simulation */}
-            <div className="w-full h-8 mt-6 flex items-end justify-between gap-1 opacity-40">
+            <p className="text-sm font-mono text-slate-400 uppercase tracking-widest mb-5">System Score</p>
+            {/* Circular gauge */}
+            <CircularGauge value={overallScore} max={25} />
+            <p className="text-xs text-slate-500 mt-4">Trailing 30 days</p>
+
+            {/* Sparkline */}
+            <div className="w-full h-8 mt-5 flex items-end justify-between gap-1 opacity-40">
               {[4, 5, 3, 6, 7, 5, 8, 9].map((h, i) => (
-                <div key={i} className="w-full bg-cyan-400/50 rounded-t-sm transition-all duration-1000" style={{ height: `${h * 10}%` }} />
+                <div key={i} className="w-full bg-cyan-400/50 rounded-t-sm" style={{ height: `${h * 10}%` }} />
               ))}
             </div>
           </PremiumCard>

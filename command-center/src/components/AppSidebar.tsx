@@ -8,7 +8,6 @@ import {
   Target,
   FileText,
   Briefcase,
-  ChevronDown,
   Sparkles,
   Compass,
   Wrench,
@@ -17,8 +16,6 @@ import {
   Star,
   CheckSquare,
   Layout,
-  Menu,
-  X
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PremiumBadge } from "./PremiumBadge";
@@ -78,7 +75,7 @@ export const AppSidebar = () => {
       transition={{ type: "spring", stiffness: 200, damping: 25 }}
       onMouseEnter={() => setIsExpanded(true)}
       onMouseLeave={() => setIsExpanded(false)}
-      className="hidden md:flex flex-col border-r border-white/5 bg-black/40 backdrop-blur-2xl h-screen sticky top-0 z-50 overflow-hidden"
+      className="hidden md:flex flex-col border-r border-white/5 bg-black/40 backdrop-blur-2xl h-full flex-shrink-0 z-50 overflow-hidden"
     >
       {/* Workspace Switcher */}
       <div className="h-20 flex items-center px-6 border-b border-white/[0.02] hover:bg-white/[0.02] cursor-pointer transition-colors whitespace-nowrap">
@@ -132,9 +129,9 @@ export const AppSidebar = () => {
                     to={item.href}
                     className={cn(
                       "flex items-center w-full px-2 py-2.5 rounded-xl text-sm transition-all duration-300 relative group",
-                      isExactMatch 
+                      isExactMatch
                         ? "text-white"
-                        : "text-slate-400 hover:text-white hover:bg-white/[0.04]"
+                        : "text-slate-400 hover:text-white hover:bg-white/[0.04] hover:translate-x-0.5"
                     )}
                   >
                     {isExactMatch && (

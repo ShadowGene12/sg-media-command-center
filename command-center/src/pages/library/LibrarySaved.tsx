@@ -1,69 +1,92 @@
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Bookmark, Clock, ArrowRight, BookOpen } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { motion } from "framer-motion";
+import { Bookmark, Clock, ArrowRight, BookOpen, FileText, Compass } from "lucide-react";
+import { Link } from "react-router-dom";
+import { PageHeader, SectionLabel } from "@/components/PageHeader";
+import { EmptyState } from "@/components/EmptyState";
 
 const MOCK_SAVED = [
-  { id: 'sop-1', title: 'The Perfect Sales Script Template', pillar: 'Sales & Conversion', type: 'SOP', time: '15 min read', progress: 60 },
-  { id: 'sop-3', title: 'LinkedIn Outbound System', pillar: 'Customer Acquisition', type: 'Pathway', time: '4 weeks', progress: 0 },
+  { id: "sop-1", title: "The Perfect Sales Script Template", pillar: "Sales & Conversion", color: "#1D9E75", type: "SOP", time: "15 min read", progress: 60 },
+  { id: "sop-3", title: "LinkedIn Outbound System", pillar: "Customer Acquisition", color: "#378ADD", type: "Pathway", time: "4 weeks", progress: 0 },
 ];
+
+const cardVars = {
+  hidden: { opacity: 0, y: 14, filter: "blur(6px)" },
+  show: (i: number) => ({ opacity: 1, y: 0, filter: "blur(0px)", transition: { type: "spring", stiffness: 100, damping: 18, delay: i * 0.08 } }),
+};
 
 export default function LibrarySaved() {
   return (
-    <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-12">
-      <div className="flex items-center gap-4">
-        <div className="w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center border border-primary/30">
-          <Bookmark className="w-6 h-6 text-primary" />
-        </div>
-        <div>
-          <h1 className="text-4xl font-display font-bold">Saved Items</h1>
-          <p className="text-slate-400 text-lg">Your bookmarked SOPs, frameworks, and tools.</p>
-        </div>
-      </div>
+    <div className="max-w-7xl mx-auto space-y-10 pb-12">
+      <PageHeader
+        label="Knowledge Base"
+        title="Saved Items"
+        description="Your bookmarked SOPs, frameworks, and tools."
+      />
 
       {MOCK_SAVED.length === 0 ? (
-        <div className="bg-slate-900/50 border border-white/5 rounded-2xl p-12 text-center">
-          <BookOpen className="w-12 h-12 text-slate-600 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold mb-2">Nothing saved yet</h3>
-          <p className="text-slate-400 mb-6">Explore the library to find and save resources you want to implement.</p>
-          <Link to="/library">
-            <Button className="bg-primary hover:bg-primary/90 text-white">
-              Browse Library
-            </Button>
-          </Link>
-        </div>
+        <EmptyState
+          icons={[BookOpen, FileText, Compass]}
+          title="Nothing saved yet"
+          description="Explore the library to find and save resources you want to implement."
+          action={{ label: "Browse Library", onClick: () => {} }}
+          className="min-h-[320px]"
+        />
       ) : (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {MOCK_SAVED.map((item) => (
-            <Card key={item.id} className="bg-slate-900/50 border-white/5 hover:border-white/20 transition-all group relative overflow-hidden">
-              {item.progress > 0 && (
-                <div className="absolute top-0 left-0 w-full h-1 bg-slate-800">
-                  <div className="h-full bg-emerald-500" style={{ width: `${item.progress}%` }} />
-                </div>
-              )}
-              <CardHeader className="pb-3 pt-6">
-                <div className="flex justify-between items-start mb-2">
-                  <span className="text-xs font-semibold px-2 py-1 rounded bg-slate-800 text-slate-300">
-                    {item.type}
-                  </span>
-                  <div className="flex items-center text-xs text-slate-400">
-                    <Clock className="w-3 h-3 mr-1" /> {item.time}
+        <div>
+          <SectionLabel className="mb-5">Saved — {MOCK_SAVED.length} items</SectionLabel>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {MOCK_SAVED.map((item, i) => (
+              <motion.div
+                key={item.id}
+                custom={i}
+                variants={cardVars}
+                initial="hidden"
+                animate="show"
+                className="group relative rounded-2xl border border-white/[0.06] bg-black/40 backdrop-blur-md overflow-hidden hover:border-white/[0.12] transition-all duration-300"
+              >
+                {/* Progress bar at top */}
+                {item.progress > 0 && (
+                  <div className="absolute top-0 left-0 right-0 h-0.5 bg-white/[0.04]">
+                    <motion.div
+                      className="h-full"
+                      style={{ backgroundColor: item.color }}
+                      initial={{ width: 0 }}
+                      animate={{ width: `${item.progress}%` }}
+                      transition={{ delay: 0.5 + i * 0.1, duration: 0.8, ease: "easeOut" }}
+                    />
                   </div>
+                )}
+
+                <div className="p-5 flex flex-col gap-4 pt-6">
+                  <div className="flex items-center justify-between">
+                    <span
+                      className="text-[10px] font-mono font-semibold px-2.5 py-1 rounded-full border"
+                      style={{ color: item.color, backgroundColor: `${item.color}18`, borderColor: `${item.color}30` }}
+                    >
+                      {item.type}
+                    </span>
+                    <div className="flex items-center gap-1 text-[10px] font-mono text-slate-600">
+                      <Clock className="h-3 w-3" /> {item.time}
+                    </div>
+                  </div>
+
+                  <div>
+                    <p className="text-sm font-semibold text-white leading-snug group-hover:text-violet-200 transition-colors duration-200">
+                      {item.title}
+                    </p>
+                    <p className="text-xs text-slate-500 mt-1">{item.pillar}</p>
+                  </div>
+
+                  <Link to={`/library/${item.id}`}>
+                    <button className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.06] hover:border-white/[0.10] text-xs font-mono text-slate-400 hover:text-white transition-all duration-200">
+                      <span>{item.progress > 0 ? "Continue" : "View Resource"}</span>
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </button>
+                  </Link>
                 </div>
-                <CardTitle className="text-lg group-hover:text-primary transition-colors">{item.title}</CardTitle>
-                <CardDescription>{item.pillar}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Link to={`/library/${item.id}`}>
-                  <Button variant="ghost" className="w-full text-slate-400 group-hover:text-white justify-between h-10 px-0 bg-white/5 px-4 rounded-md">
-                    <span>{item.progress > 0 ? 'Continue' : 'View Resource'}</span>
-                    <ArrowRight className="w-4 h-4 ml-1" />
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-          ))}
+              </motion.div>
+            ))}
+          </div>
         </div>
       )}
     </div>

@@ -1,10 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Bot, Send, User, Sparkles, Zap } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { Bot } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { UpgradeModal } from '@/components/UpgradeModal';
+import { AnimatedAIChat } from '@/components/ui/animated-ai-chat';
 
 interface Message {
   id: string;
@@ -79,8 +77,8 @@ export default function AIAdvisorHub() {
 
       <div className="mb-6 flex justify-between items-end">
         <div>
-          <h1 className="text-4xl font-display font-bold flex items-center gap-3">
-            <Bot className="w-8 h-8 text-indigo-500" /> AI Advisor
+          <h1 className="text-4xl font-display font-light text-white tracking-tight flex items-center gap-3">
+            <Bot className="w-8 h-8 text-violet-400" /> AI Advisor
           </h1>
           <p className="text-slate-400 text-lg mt-2">Your 24/7 strategic consultant trained on your specific bottlenecks.</p>
         </div>
@@ -102,102 +100,15 @@ export default function AIAdvisorHub() {
         </div>
       </div>
 
-      <Card className="flex-1 flex flex-col bg-slate-900 border-white/10 overflow-hidden shadow-2xl relative h-[600px]">
-        {/* Chat Area */}
-        <div 
-          ref={scrollRef}
-          className="flex-1 overflow-y-auto p-6 space-y-6"
-        >
-          {messages.map(msg => (
-            <div 
-              key={msg.id} 
-              className={cn(
-                "flex gap-4 max-w-[85%]",
-                msg.role === 'user' ? "ml-auto flex-row-reverse" : ""
-              )}
-            >
-              <div className={cn(
-                "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-lg",
-                msg.role === 'user' 
-                  ? "bg-slate-800 border border-white/10 text-white" 
-                  : "bg-indigo-500/20 border border-indigo-500/30 text-indigo-400"
-              )}>
-                {msg.role === 'user' ? <User className="w-5 h-5" /> : <Sparkles className="w-5 h-5" />}
-              </div>
-              <div className={cn(
-                "p-4 rounded-2xl text-[15px] leading-relaxed shadow-sm",
-                msg.role === 'user'
-                  ? "bg-primary text-white rounded-tr-sm"
-                  : "bg-slate-800/80 border border-white/5 text-slate-200 rounded-tl-sm"
-              )}>
-                {msg.content}
-              </div>
-            </div>
-          ))}
-          
-          {isTyping && (
-            <div className="flex gap-4 max-w-[85%]">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-indigo-500/20 border border-indigo-500/30 text-indigo-400">
-                <Sparkles className="w-5 h-5" />
-              </div>
-              <div className="p-4 rounded-2xl bg-slate-800/80 border border-white/5 rounded-tl-sm flex items-center gap-1.5">
-                <div className="w-2 h-2 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '0ms' }} />
-                <div className="w-2 h-2 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '150ms' }} />
-                <div className="w-2 h-2 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '300ms' }} />
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Input Area */}
-        <div className="p-4 bg-slate-950/50 border-t border-white/5 backdrop-blur-md">
-          {messages.length === 1 && credits > 0 && (
-            <div className="flex flex-wrap gap-2 mb-4">
-              {SUGGESTIONS.map((suggestion, i) => (
-                <button 
-                  key={i}
-                  onClick={() => handleSend(suggestion)}
-                  className="text-xs flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-slate-300 hover:bg-indigo-500/10 hover:text-indigo-300 hover:border-indigo-500/30 transition-colors"
-                >
-                  <Zap className="w-3 h-3" /> {suggestion}
-                </button>
-              ))}
-            </div>
-          )}
-          
-          <div className="relative flex items-end gap-2">
-            <Textarea 
-              placeholder={credits > 0 ? "Ask your advisor anything..." : "You've used all your free credits. Upgrade to continue."}
-              className="min-h-[60px] max-h-[200px] resize-none bg-slate-900 border-white/10 text-white pb-12 rounded-xl focus-visible:ring-indigo-500/50 disabled:opacity-50"
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              disabled={credits <= 0}
-              onKeyDown={e => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSend();
-                }
-              }}
-            />
-            <Button 
-              size="icon" 
-              className={cn(
-                "absolute bottom-3 right-3 h-10 w-10 text-white rounded-lg transition-all shadow-lg",
-                credits > 0 
-                  ? "bg-indigo-600 hover:bg-indigo-500 shadow-[0_0_15px_rgba(79,70,229,0.3)]" 
-                  : "bg-slate-700 hover:bg-slate-600 cursor-not-allowed opacity-50"
-              )}
-              onClick={() => handleSend()}
-              disabled={(!input.trim() && credits > 0) || isTyping}
-            >
-              <Send className="w-4 h-4" />
-            </Button>
-          </div>
-          <p className="text-center text-[10px] text-slate-500 mt-3 font-medium">
-            AI Advisor can make mistakes. Always review generated scripts and strategy before implementation.
-          </p>
-        </div>
-      </Card>
+      <div className="flex-1 relative rounded-2xl overflow-hidden border border-white/5 bg-black/20 shadow-2xl backdrop-blur-md">
+        <AnimatedAIChat 
+          messages={messages} 
+          onSendMessage={handleSend} 
+          isTyping={isTyping} 
+          credits={credits}
+          suggestions={SUGGESTIONS}
+        />
+      </div>
     </div>
   );
 }
