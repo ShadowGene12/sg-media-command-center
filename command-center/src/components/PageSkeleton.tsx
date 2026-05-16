@@ -68,3 +68,44 @@ export function PageSkeleton() {
     </div>
   );
 }
+
+// Dashboard-specific skeleton matching HomeDashboard layout
+export function DashboardSkeleton() {
+  return (
+    <div className="max-w-5xl mx-auto space-y-10 pb-20 pt-8 px-4 sm:px-6 animate-in fade-in duration-400">
+      {/* Greeting */}
+      <div className="space-y-4">
+        <SkeletonBlock className="h-3 w-40" />
+        <SkeletonBlock className="h-12 w-80" />
+        <SkeletonBlock className="h-4 w-96 max-w-full" />
+      </div>
+      {/* Main grid */}
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <div className="md:col-span-8">
+          <div className="h-72 rounded-2xl border border-white/[0.06] bg-black/40 backdrop-blur-md p-8 space-y-4">
+            <SkeletonBlock className="h-5 w-32 rounded-full" />
+            <SkeletonBlock className="h-9 w-48" />
+            <SkeletonBlock className="h-3 w-full" />
+            <SkeletonBlock className="h-3 w-4/5" />
+            <div className="mt-8">
+              <SkeletonBlock className="h-12 w-40 rounded-full" />
+            </div>
+          </div>
+        </div>
+        <div className="md:col-span-4">
+          <div className="h-72 rounded-2xl border border-white/[0.06] bg-black/40 backdrop-blur-md p-8 flex flex-col items-center justify-center space-y-3">
+            <SkeletonBlock className="h-3 w-24" />
+            <SkeletonBlock className="h-32 w-32 rounded-full" />
+            <SkeletonBlock className="h-2 w-20" />
+          </div>
+        </div>
+        <div className="md:col-span-12">
+          <div className="rounded-2xl border border-white/[0.06] bg-black/40 backdrop-blur-md p-8 space-y-2">
+            <SkeletonBlock className="h-3 w-28 mb-4" />
+            {[...Array(3)].map((_, i) => <RowSkeleton key={i} />)}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

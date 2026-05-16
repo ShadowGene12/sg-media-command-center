@@ -1,167 +1,268 @@
-import React, { useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, Target, Settings, Link as LinkIcon, Calendar } from 'lucide-react';
+import { ArrowLeft, Target, ArrowRight, Loader2, Flag, CheckCircle2 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/lib/auth';
+import { PremiumCard } from '@/components/PremiumCard';
+import { toast } from 'sonner';
 
-const WIZARD_STEPS = [
-  { id: 1, title: 'Select Pillar & Metric', icon: Target },
-  { id: 2, title: 'Set Targets', icon: Settings },
-  { id: 3, title: 'Link SOP/Pathway', icon: LinkIcon },
-  { id: 4, title: 'Check-in Cadence', icon: Calendar },
+const PILLARS = [
+  { label: "Market & Offer Clarity",          value: "market_offer", color: "#6D4AE6" },
+  { label: "Customer Acquisition",             value: "acquisition",  color: "#378ADD" },
+  { label: "Sales & Conversion",               value: "sales",        color: "#1D9E75" },
+  { label: "Profit Optimization",              value: "profit",       color: "#F59E0B" },
+  { label: "Financial & Performance Control",  value: "finance",      color: "#D85A30" },
+];
+
+const TEMPLATES = [
+  { pillar: "sales",        title: "Fix Sales Conversion Engine",    objective: "Increase close rate from current to target by implementing a documented sales process and follow-up cadence.", start: 0, target: 35 },
+  { pillar: "acquisition",  title: "Build Predictable Lead Engine",  objective: "Establish a consistent outbound channel producing qualified leads weekly with tracked CAC.", start: 0, target: 20 },
+  { pillar: "market_offer", title: "Sharpen Offer Positioning",      objective: "Achieve a clear, specific offer that passes the 10-second stranger test.", start: 0, target: 80 },
+  { pillar: "profit",       title: "Improve Margin Per Client",      objective: "Increase net margin by identifying and eliminating top three profit leaks.", start: 0, target: 45 },
+  { pillar: "finance",      title: "Build KPI Control Cadence",      objective: "Implement weekly KPI review and 90-day cash flow visibility.", start: 0, target: 90 },
 ];
 
 export default function SprintWizard() {
-  const [currentStep, setCurrentStep] = useState(1);
+  const { user } = useAuth();
   const navigate = useNavigate();
+  const qc = useQueryClient();
 
-  const handleNext = () => {
-    if (currentStep < 4) setCurrentStep(c => c + 1);
-    else navigate('/workspace/1');
-  };
+  const [step, setStep] = useState(0);
+  const [form, setForm] = useState({
+    pillar: "",
+    title: "",
+    objective: "",
+    start_metric: "",
+    target_metric: "",
+    end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+  });
+
+  const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }));
+
+  const create = useMutation({
+    mutationFn: async () => {
+      if (!user) throw new Error("Not authenticated");
+      const { data, error } = await supabase.from('sprints').insert({
+        user_id: user.id,
+        title: form.title,
+        objective: form.objective,
+        pillar: form.pillar,
+        start_metric: form.start_metric ? Number(form.start_metric) : null,
+        target_metric: form.target_metric ? Number(form.target_metric) : null,
+        start_date: new Date().toISOString().split("T")[0],
+        end_date: form.end_date,
+        status: 'active',
+      }).select().single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (data) => {
+      qc.invalidateQueries({ queryKey: ['sprints'] });
+      toast.success("Sprint created — let's go.");
+      navigate('/sprints');
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const selectedPillar = PILLARS.find(p => p.value === form.pillar);
+
+  const STEPS = [
+    {
+      title: "Pick your pillar",
+      subtitle: "Which growth pillar does this sprint target?",
+      valid: !!form.pillar,
+    },
+    {
+      title: "Name your sprint",
+      subtitle: "What is the specific objective?",
+      valid: form.title.length > 3 && form.objective.length > 10,
+    },
+    {
+      title: "Set your targets",
+      subtitle: "Define what success looks like in numbers.",
+      valid: true,
+    },
+  ];
+
+  const currentStep = STEPS[step];
 
   return (
-    <div className="max-w-3xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-12">
-      <Link to="/sprints" className="inline-flex items-center text-sm text-slate-400 hover:text-white transition-colors">
-        <ArrowLeft className="w-4 h-4 mr-2" /> Cancel Setup
+    <div className="max-w-2xl mx-auto space-y-8 pb-12">
+      <Link to="/sprints" className="inline-flex items-center text-sm text-slate-500 hover:text-white transition-colors gap-2 font-mono">
+        <ArrowLeft className="w-4 h-4" /> Cancel
       </Link>
 
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-display font-bold mb-2">Configure New Sprint</h1>
-        <p className="text-slate-400">Lock in your focus for the next 4-6 weeks.</p>
-      </div>
-
-      <div className="flex justify-between relative mb-12 max-w-lg mx-auto">
-        <div className="absolute top-1/2 left-0 w-full h-1 bg-slate-800 -z-10 -translate-y-1/2">
-          <div className="h-full bg-primary transition-all duration-500" style={{ width: `${((currentStep - 1) / 3) * 100}%` }} />
+      {/* Progress */}
+      <div>
+        <p className="font-mono text-xs text-violet-400/70 uppercase tracking-widest mb-2">New Sprint</p>
+        <h1 className="text-3xl font-display font-light text-white tracking-tight mb-6">{currentStep.title}</h1>
+        <div className="flex gap-2">
+          {STEPS.map((s, i) => (
+            <div key={i} className={`h-1 flex-1 rounded-full transition-all duration-500 ${
+              i < step ? "bg-violet-500" : i === step ? "bg-violet-400" : "bg-white/[0.07]"
+            }`} />
+          ))}
         </div>
-        {WIZARD_STEPS.map((step) => {
-          const isActive = step.id === currentStep;
-          const isComplete = step.id < currentStep;
-          return (
-            <div key={step.id} className="flex flex-col items-center gap-2">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors ${
-                isActive ? 'bg-primary border-primary text-white shadow-[0_0_15px_rgba(139,92,246,0.5)]' :
-                isComplete ? 'bg-slate-800 border-primary text-primary' :
-                'bg-slate-900 border-slate-700 text-slate-500'
-              }`}>
-                <step.icon className="w-5 h-5" />
-              </div>
-              <span className={`text-xs font-medium absolute -bottom-6 whitespace-nowrap ${
-                isActive ? 'text-white' : 'text-slate-500'
-              }`}>{step.title}</span>
-            </div>
-          )
-        })}
       </div>
 
-      <Card className="bg-slate-900 border-white/10 shadow-2xl">
-        <CardContent className="p-8">
-          {currentStep === 1 && (
-            <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
-              <h2 className="text-xl font-bold">What are we optimizing?</h2>
-              <div className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium text-slate-400 mb-1 block">Growth Pillar</label>
-                  <select className="w-full h-12 bg-slate-800 border border-white/10 rounded-lg px-4 text-white appearance-none focus:ring-1 focus:ring-primary">
-                    <option>Sales & Conversion</option>
-                    <option>Customer Acquisition</option>
-                    <option>Market & Offer</option>
-                    <option>Profit Optimization</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-slate-400 mb-1 block">Primary Metric</label>
-                  <Input placeholder="e.g. Close Rate (%)" className="h-12 bg-slate-800 border-white/10" />
-                </div>
-              </div>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={step}
+          initial={{ opacity: 0, x: 20, filter: "blur(6px)" }}
+          animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+          exit={{ opacity: 0, x: -20, filter: "blur(6px)" }}
+          transition={{ duration: 0.25 }}
+        >
+          {/* Step 0: Pillar selection */}
+          {step === 0 && (
+            <div className="space-y-3">
+              {PILLARS.map(p => (
+                <motion.button
+                  key={p.value}
+                  onClick={() => {
+                    set("pillar", p.value);
+                    const tmpl = TEMPLATES.find(t => t.pillar === p.value);
+                    if (tmpl) {
+                      set("title", tmpl.title);
+                      set("objective", tmpl.objective);
+                    }
+                  }}
+                  whileHover={{ x: 4 }}
+                  whileTap={{ scale: 0.99 }}
+                  className={`w-full p-5 rounded-2xl border text-left transition-all duration-200 flex items-center gap-4 ${
+                    form.pillar === p.value
+                      ? "border-violet-500/50 bg-violet-500/[0.10]"
+                      : "border-white/[0.07] bg-black/40 hover:border-white/[0.14] hover:bg-white/[0.03]"
+                  }`}
+                >
+                  <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: p.color, boxShadow: `0 0 10px ${p.color}80` }} />
+                  <span className="text-sm font-light text-white/80">{p.label}</span>
+                  {form.pillar === p.value && (
+                    <CheckCircle2 className="w-4 h-4 text-violet-400 ml-auto" />
+                  )}
+                </motion.button>
+              ))}
             </div>
           )}
 
-          {currentStep === 2 && (
-            <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
-              <h2 className="text-xl font-bold">Set your baseline and target</h2>
+          {/* Step 1: Title + Objective */}
+          {step === 1 && (
+            <PremiumCard className="p-6 space-y-5">
+              {selectedPillar && (
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: selectedPillar.color }} />
+                  <span className="text-[10px] font-mono text-white/40 uppercase tracking-widest">{selectedPillar.label}</span>
+                </div>
+              )}
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-mono text-white/40 uppercase tracking-widest">Sprint Title</label>
+                <Input
+                  value={form.title}
+                  onChange={e => set("title", e.target.value)}
+                  placeholder="Fix Sales Conversion Engine"
+                  className="h-12 bg-white/[0.04] border-white/[0.08] text-white rounded-xl focus-visible:ring-0 focus-visible:border-violet-500/60"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-mono text-white/40 uppercase tracking-widest">Objective (what does success look like?)</label>
+                <textarea
+                  value={form.objective}
+                  onChange={e => set("objective", e.target.value)}
+                  rows={3}
+                  placeholder="Increase close rate from 15% to 30% by implementing a documented sales process..."
+                  className="w-full bg-white/[0.04] border border-white/[0.08] text-white/80 text-sm rounded-xl p-3.5 resize-none focus:outline-none focus:border-violet-500/50 font-light placeholder:text-white/20"
+                />
+              </div>
+            </PremiumCard>
+          )}
+
+          {/* Step 2: Targets + Date */}
+          {step === 2 && (
+            <PremiumCard className="p-6 space-y-5">
               <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-slate-400 mb-1 block">Current Baseline</label>
-                  <Input type="number" placeholder="15" className="h-12 bg-slate-800 border-white/10 font-mono text-xl" />
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-mono text-white/40 uppercase tracking-widest">Starting metric</label>
+                  <Input
+                    type="number"
+                    value={form.start_metric}
+                    onChange={e => set("start_metric", e.target.value)}
+                    placeholder="15"
+                    className="h-12 bg-white/[0.04] border-white/[0.08] text-white rounded-xl focus-visible:ring-0 focus-visible:border-violet-500/60"
+                  />
+                  <p className="text-[10px] text-white/20 font-mono">Where you are now</p>
                 </div>
-                <div>
-                  <label className="text-sm font-medium text-slate-400 mb-1 block">Goal Target</label>
-                  <Input type="number" placeholder="35" className="h-12 bg-slate-800 border-primary/50 font-mono text-xl text-primary" />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {currentStep === 3 && (
-            <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
-              <h2 className="text-xl font-bold">Link an Execution Resource</h2>
-              <p className="text-sm text-slate-400">What SOP or Pathway will you use to drive this metric?</p>
-              <div className="space-y-3">
-                <button className="w-full p-4 text-left border border-primary/50 bg-primary/10 rounded-xl flex items-center justify-between">
-                  <div>
-                    <div className="font-semibold text-white">Pathway: Fix Sales Engine</div>
-                    <div className="text-xs text-primary">Recommended based on bottleneck</div>
-                  </div>
-                  <div className="w-4 h-4 rounded-full border-2 border-primary bg-primary" />
-                </button>
-                <button className="w-full p-4 text-left border border-white/10 bg-slate-800/50 rounded-xl flex items-center justify-between opacity-60">
-                  <div>
-                    <div className="font-semibold text-white">SOP: 5-Touch Follow Up</div>
-                    <div className="text-xs text-slate-400">Library resource</div>
-                  </div>
-                  <div className="w-4 h-4 rounded-full border-2 border-slate-600" />
-                </button>
-              </div>
-            </div>
-          )}
-
-          {currentStep === 4 && (
-            <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
-              <h2 className="text-xl font-bold">Schedule Check-ins</h2>
-              <div className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium text-slate-400 mb-1 block">Duration</label>
-                  <select className="w-full h-12 bg-slate-800 border border-white/10 rounded-lg px-4 text-white appearance-none">
-                    <option>4 Weeks (Recommended)</option>
-                    <option>6 Weeks</option>
-                    <option>8 Weeks</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-slate-400 mb-1 block">Check-in Day</label>
-                  <select className="w-full h-12 bg-slate-800 border border-white/10 rounded-lg px-4 text-white appearance-none">
-                    <option>Friday Afternoon</option>
-                    <option>Monday Morning</option>
-                  </select>
-                </div>
-                <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-lg p-4 mt-4 text-sm text-indigo-300">
-                  You will receive a notification and AI Advisor prompt every week to log your numbers.
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-mono text-white/40 uppercase tracking-widest">Target metric</label>
+                  <Input
+                    type="number"
+                    value={form.target_metric}
+                    onChange={e => set("target_metric", e.target.value)}
+                    placeholder="30"
+                    className="h-12 bg-white/[0.04] border-white/[0.08] text-white rounded-xl focus-visible:ring-0 focus-visible:border-violet-500/60"
+                  />
+                  <p className="text-[10px] text-white/20 font-mono">Where you want to be</p>
                 </div>
               </div>
-            </div>
-          )}
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-mono text-white/40 uppercase tracking-widest">Sprint end date</label>
+                <Input
+                  type="date"
+                  value={form.end_date}
+                  onChange={e => set("end_date", e.target.value)}
+                  className="h-12 bg-white/[0.04] border-white/[0.08] text-white rounded-xl focus-visible:ring-0 focus-visible:border-violet-500/60"
+                />
+              </div>
 
-          <div className="mt-10 pt-6 border-t border-white/10 flex justify-between">
-            <Button 
-              variant="ghost" 
-              onClick={() => setCurrentStep(c => Math.max(1, c - 1))}
-              disabled={currentStep === 1}
-              className="text-slate-400"
-            >
-              Back
-            </Button>
-            <Button 
-              onClick={handleNext}
-              className="bg-primary hover:bg-primary/90 text-white w-32"
-            >
-              {currentStep === 4 ? 'Start Sprint' : 'Continue'}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+              {/* Preview */}
+              <div className="rounded-xl p-4 border border-violet-500/20 bg-violet-500/[0.06]">
+                <div className="flex items-center gap-2 mb-2">
+                  <Flag className="w-3.5 h-3.5 text-violet-400" />
+                  <span className="text-[10px] font-mono text-violet-400 uppercase tracking-widest">Sprint Preview</span>
+                </div>
+                <p className="text-sm text-white/70 font-light">{form.title || "Untitled sprint"}</p>
+                <p className="text-xs text-white/30 mt-1 font-mono">
+                  {selectedPillar?.label} · {form.start_metric || "?"} → {form.target_metric || "?"} · Ends {form.end_date}
+                </p>
+              </div>
+            </PremiumCard>
+          )}
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Navigation */}
+      <div className="flex items-center justify-between pt-2">
+        <Button
+          variant="ghost"
+          onClick={() => setStep(s => Math.max(0, s - 1))}
+          disabled={step === 0}
+          className="text-slate-500 hover:text-white disabled:opacity-0 rounded-xl"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" /> Back
+        </Button>
+
+        {step < STEPS.length - 1 ? (
+          <Button
+            onClick={() => setStep(s => s + 1)}
+            disabled={!currentStep.valid}
+            className="bg-violet-600 hover:bg-violet-500 text-white rounded-xl px-6 h-11 shadow-[0_0_16px_rgba(109,74,230,0.3)] disabled:opacity-40"
+          >
+            Continue <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+        ) : (
+          <Button
+            onClick={() => create.mutate()}
+            disabled={create.isPending}
+            className="bg-violet-600 hover:bg-violet-500 text-white rounded-xl px-6 h-11 shadow-[0_0_16px_rgba(109,74,230,0.3)]"
+          >
+            {create.isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Flag className="w-4 h-4 mr-2" />}
+            Launch Sprint
+          </Button>
+        )}
+      </div>
     </div>
   );
 }

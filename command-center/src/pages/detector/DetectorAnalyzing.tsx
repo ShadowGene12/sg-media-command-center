@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { AnimatedBackground } from "@/components/AnimatedBackground";
 
 const PILLARS = [
   { name: "Market & Offer Clarity", color: "#6D4AE6", score: 2.1 },
@@ -34,7 +35,7 @@ const DetectorAnalyzing = () => {
       setTimeout(() => setPhase(3), 4000),
       // Phase 4: Navigate to results (5s)
       setTimeout(() => {
-        navigate("/detector/results/demo-001");
+        navigate("/detector/results-live");
       }, 5500),
     ];
 
@@ -75,9 +76,8 @@ const DetectorAnalyzing = () => {
   }, [phase]);
 
   return (
-    <div className="min-h-screen bg-[#0A0A0C] flex flex-col items-center justify-center relative overflow-hidden">
-      {/* Background ambient glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#6D4AE6]/8 rounded-full blur-[120px] pointer-events-none" />
+    <div className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
+      <AnimatedBackground />
 
       <div className="relative z-10 text-center max-w-lg w-full px-4">
         {/* Phase 0 + 1: "Analyzing your responses..." */}

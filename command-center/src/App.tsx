@@ -6,12 +6,15 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Outlet, useLocation, Navigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { AuthProvider, useAuth } from "./lib/auth";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 
 // Shell
 import { AppSidebar } from "./components/AppSidebar";
 import { AppHeader } from "./components/AppHeader";
 import { CommandPalette } from "./components/CommandPalette";
 import { AnimatedBackground } from "./components/AnimatedBackground";
+import { MobileNav } from "./components/MobileNav";
 
 // Premium Loading Screen
 const PageLoader = () => (
@@ -32,9 +35,11 @@ const PageLoader = () => (
 const HomeDashboard = React.lazy(() => import("./pages/HomeDashboard"));
 
 // Public funnel pages
+const LandingPage = React.lazy(() => import("./pages/LandingPage"));
 const DetectorEntry = React.lazy(() => import("./pages/detector/DetectorEntry"));
 const DetectorFlow = React.lazy(() => import("./pages/detector/DetectorFlow"));
 const DetectorAnalyzing = React.lazy(() => import("./pages/detector/DetectorAnalyzing"));
+const DetectorResultsLive = React.lazy(() => import("./pages/detector/DetectorResultsLive"));
 const DetectorResults = React.lazy(() => import("./pages/detector/DetectorResults"));
 const DetectorHistory = React.lazy(() => import("./pages/detector/DetectorHistory"));
 
@@ -77,6 +82,12 @@ const BillingSettings = React.lazy(() => import("./pages/settings/BillingSetting
 const OrganizationSettings = React.lazy(() => import("./pages/settings/OrganizationSettings"));
 const AccountSettings = React.lazy(() => import("./pages/AccountSettings"));
 
+// Admin pages
+const AdminLayout      = React.lazy(() => import("./pages/admin/AdminLayout"));
+const AdminDashboard   = React.lazy(() => import("./pages/admin/AdminDashboard"));
+const AdminSOPs        = React.lazy(() => import("./pages/admin/AdminSOPs"));
+const AdminUsers       = React.lazy(() => import("./pages/admin/AdminUsers"));
+
 // DFY Client pages
 const ClientOverview = React.lazy(() => import("./pages/client/Overview"));
 const ClientReports = React.lazy(() => import("./pages/client/Reports"));
@@ -101,7 +112,8 @@ const CommandCenterLayout = () => {
       <AppSidebar />
       <div className="flex flex-col flex-1 min-w-0 z-10 overflow-hidden">
         <AppHeader />
-        <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-8 relative">
+        <MobileNav />
+        <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-8 pb-20 md:pb-8 relative">
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}
@@ -111,9 +123,11 @@ const CommandCenterLayout = () => {
               transition={{ duration: 0.4, type: "spring", bounce: 0, ease: "circOut" }}
               className="w-full h-full"
             >
-              <Suspense fallback={<PageSkeleton />}>
-                <Outlet />
-              </Suspense>
+              <ErrorBoundary>
+                <Suspense fallback={<PageSkeleton />}>
+                  <Outlet />
+                </Suspense>
+              </ErrorBoundary>
             </motion.div>
           </AnimatePresence>
         </main>
@@ -122,27 +136,39 @@ const CommandCenterLayout = () => {
   );
 };
 
+// ─── Auth guard for shell routes ─────────────────────────────
+const RequireAuth = ({ children }: { children: React.ReactNode }) => {
+  const { user, loading } = useAuth();
+  if (loading) return <div className="h-screen w-screen bg-[#050505] flex items-center justify-center"><PageLoader /></div>;
+  if (!user) return <Navigate to="/" replace />;
+  return <>{children}</>;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <AuthProvider>
         <Suspense fallback={<div className="h-screen w-screen bg-[#050505] flex items-center justify-center"><PageLoader /></div>}>
           <Routes>
             {/* Public Funnel Routes (No Shell) */}
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/landing" element={<Navigate to="/" replace />} />
             <Route path="/detector" element={<DetectorEntry />} />
             <Route path="/detector/flow" element={<DetectorFlow />} />
             <Route path="/detector/analyzing" element={<DetectorAnalyzing />} />
+            <Route path="/detector/results-live" element={<DetectorResultsLive />} />
             <Route path="/pricing" element={<Pricing />} />
 
             {/* Auth Routes (No Shell) */}
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
 
-            {/* Command Center Shell Routes */}
-            <Route element={<CommandCenterLayout />}>
-              <Route path="/" element={<HomeDashboard />} />
+            {/* Command Center Shell Routes — Auth Required */}
+            <Route element={<RequireAuth><CommandCenterLayout /></RequireAuth>}>
+              <Route path="/dashboard" element={<HomeDashboard />} />
 
               {/* Detector & Diagnostics */}
               <Route path="/detector/results/:id" element={<DetectorResults />} />
@@ -201,9 +227,17 @@ const App = () => (
               <Route path="/client/account" element={<ClientAccount />} />
             </Route>
 
+            {/* Admin routes — AdminLayout handles its own auth guard */}
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<AdminDashboard />} />
+              <Route path="sops" element={<AdminSOPs />} />
+              <Route path="users" element={<AdminUsers />} />
+            </Route>
+
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

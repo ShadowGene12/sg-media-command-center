@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "@/lib/auth";
+import { useCommandStore } from "@/lib/store";
 import { 
   LayoutDashboard, 
   BookOpen, 
@@ -23,12 +25,17 @@ import { PremiumBadge } from "./PremiumBadge";
 export const AppSidebar = () => {
   const location = useLocation();
   const [isExpanded, setIsExpanded] = useState(false);
+  const { profile } = useAuth();
+  const { tier } = useCommandStore();
+
+  const displayName = profile?.business_name || (profile ? `${profile.first_name} ${profile.last_name}`.trim() : "Command Center") || "Command Center";
+  const tierLabel = tier === "dfy" ? "Done For You" : tier === "trial" ? "Trial" : tier.charAt(0).toUpperCase() + tier.slice(1);
 
   const navGroups = [
     {
       label: "Command Center",
       items: [
-        { icon: LayoutDashboard, label: "Home Dashboard", href: "/", locked: false },
+        { icon: LayoutDashboard, label: "Home Dashboard", href: "/dashboard", locked: false },
         { icon: Compass, label: "Diagnostic", href: "/detector/history", locked: false },
       ]
     },
@@ -92,8 +99,8 @@ export const AppSidebar = () => {
                 transition={{ duration: 0.2 }}
                 className="flex-1 min-w-0"
               >
-                <h3 className="text-sm font-display font-medium text-white truncate">SG Media Internal</h3>
-                <p className="text-[11px] font-mono text-slate-500 truncate tracking-wide">PRO TIER</p>
+                <h3 className="text-sm font-display font-medium text-white truncate">{displayName}</h3>
+                <p className="text-[11px] font-mono text-slate-500 truncate tracking-wide uppercase">{tierLabel} TIER</p>
               </motion.div>
             )}
           </AnimatePresence>

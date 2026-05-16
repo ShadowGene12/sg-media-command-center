@@ -119,9 +119,24 @@
   }
 
   body {
-    @apply bg-background text-foreground antialiased relative min-h-screen overflow-x-hidden;
+    @apply font-sans bg-background text-foreground antialiased relative min-h-screen overflow-x-hidden;
     /* Force dark mode */
     color-scheme: dark;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+    letter-spacing: -0.02em;
+  }
+
+  /* Force ALL form elements to inherit font — browsers don't do this by default */
+  input, textarea, select, button, [role="button"] {
+    font-family: inherit !important;
+    font-size: inherit;
   }
 
   /* Premium Noise Grain */
@@ -185,7 +200,7 @@
     color: white !important;
   }
   .driver-popover-title {
-    font-family: 'Space Grotesk', system-ui, sans-serif !important;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif !important;
     font-weight: 700 !important;
     font-size: 1.25rem !important;
     color: white !important;
@@ -215,6 +230,57 @@
       linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
       linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
     background-size: 20px 20px;
+  }
+
+  /* ── Global placeholder style ─────────────────────────────── */
+  ::placeholder {
+    color: rgba(168, 178, 189, 0.35); /* steel-400 at 35% */
+    font-size: 0.875rem;
+  }
+
+  /* ── Text selection ────────────────────────────────────────── */
+  ::selection {
+    background-color: rgba(109, 74, 230, 0.35);
+    color: #F8F9FA;
+  }
+
+  /* ── Focus ring — use violet across all interactive elements ─ */
+  :focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(109, 74, 230, 0.5);
+    border-radius: inherit;
+  }
+
+  /* ── Input / textarea base ─────────────────────────────────── */
+  input, textarea, select {
+    background-color: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.08);
+    color: #F8F9FA;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  input:hover, textarea:hover {
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+  input:focus, textarea:focus {
+    border-color: rgba(109, 74, 230, 0.5);
+    box-shadow: 0 0 0 3px rgba(109, 74, 230, 0.12);
+  }
+
+  /* ── Button base transition ────────────────────────────────── */
+  button {
+    transition: all 0.15s ease;
+  }
+  button:active {
+    transform: scale(0.98);
+  }
+
+  /* ── Hide scrollbar utility ─────────────────────────────────── */
+  .hide-scrollbar::-webkit-scrollbar { display: none; }
+  .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* ── Smooth scroll ──────────────────────────────────────────── */
+  html {
+    scroll-behavior: smooth;
   }
 
   @keyframes shimmer {

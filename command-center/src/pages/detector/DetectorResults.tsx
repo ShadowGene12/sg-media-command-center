@@ -302,25 +302,25 @@ const DetectorResults = () => {
       </div>
 
       {/* --- Section 4: Recommended Pathway --- */}
-      <div className="bg-gradient-to-br from-indigo-900/40 to-purple-900/20 border border-indigo-500/30 rounded-2xl p-8 relative overflow-hidden shadow-[0_0_30px_rgba(79,70,229,0.15)]">
+      <div className="bg-gradient-to-br from-violet-900/20 to-black/20 border border-violet-500/25 rounded-2xl p-8 relative overflow-hidden shadow-[0_0_30px_rgba(79,70,229,0.15)]">
         <div className="absolute top-0 right-0 p-8 opacity-10">
-          <Target className="w-32 h-32 text-indigo-400" />
+          <Target className="w-32 h-32 text-violet-400" />
         </div>
         <div className="relative z-10">
-          <span className="text-xs font-bold uppercase tracking-wider text-indigo-400 mb-2 block">Recommended Pathway</span>
+          <span className="text-xs font-bold uppercase tracking-wider text-violet-400 mb-2 block">Recommended Pathway</span>
           <h2 className="text-3xl font-bold text-white mb-3">Fix Your Sales Conversion Engine</h2>
-          <p className="text-indigo-200 max-w-2xl mb-8 leading-relaxed">
+          <p className="text-violet-200 max-w-2xl mb-8 leading-relaxed">
             Based on your primary bottleneck, we recommend starting this 4-week guided pathway. 
             It will take you step-by-step through documenting your sales process, handling objections, and building a follow-up cadence.
           </p>
           <div className="flex flex-wrap gap-4">
             <Link to="/pathways/sales-engine">
-              <Button size="lg" className="bg-indigo-600 hover:bg-indigo-500 text-white px-8 h-12 shadow-[0_0_15px_rgba(79,70,229,0.4)]">
+              <Button size="lg" className="bg-violet-600 hover:bg-violet-500 text-white px-8 h-12 shadow-[0_0_15px_rgba(79,70,229,0.4)]">
                 Start Pathway
               </Button>
             </Link>
             <Link to="/sprints/new?bottleneck=sales">
-              <Button size="lg" variant="outline" className="border-indigo-500/30 hover:bg-indigo-500/10 text-white h-12">
+              <Button size="lg" variant="outline" className="border-violet-500/25 hover:bg-violet-500/10 text-white h-12">
                 <CheckSquare className="w-4 h-4 mr-2" /> Start a Sprint
               </Button>
             </Link>
@@ -342,7 +342,7 @@ const DetectorResults = () => {
               { title: '5-Touch Follow-up Sequence', time: '20 min read', type: 'SOP' }
             ].map((sop, i) => (
               <Link key={i} to="/library/sample-sop" className="group block">
-                <div className="bg-slate-900 border border-white/5 rounded-xl p-5 hover:border-primary/40 transition-colors h-full flex flex-col justify-between">
+                <div className="bg-black/40 backdrop-blur-xl border border-white/5 rounded-xl p-5 hover:border-primary/40 transition-colors h-full flex flex-col justify-between">
                   <div>
                     <span className="text-xs font-medium text-slate-400 bg-slate-800 px-2 py-1 rounded-md mb-3 inline-block">{sop.type}</span>
                     <h4 className="font-semibold text-white mb-2 group-hover:text-primary transition-colors">{sop.title}</h4>
@@ -359,7 +359,7 @@ const DetectorResults = () => {
             <MessageSquare className="w-5 h-5 text-primary" /> 
             AI Advisor
           </h3>
-          <div className="bg-slate-900 border border-white/5 rounded-xl p-6 h-full flex flex-col items-center justify-center text-center">
+          <div className="bg-black/40 backdrop-blur-xl border border-white/5 rounded-xl p-6 h-full flex flex-col items-center justify-center text-center">
             <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mb-4">
               <Sparkles className="w-6 h-6 text-primary" />
             </div>

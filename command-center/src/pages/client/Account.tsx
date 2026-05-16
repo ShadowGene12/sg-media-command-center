@@ -18,7 +18,7 @@ export default function Account() {
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <Building2 className="h-4 w-4 text-muted-foreground" />
-              <CardTitle className="text-lg" style={{ fontFamily: 'Inter, sans-serif' }}>Organization Profile</CardTitle>
+              <CardTitle className="text-lg" >Organization Profile</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -54,7 +54,7 @@ export default function Account() {
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <Settings className="h-4 w-4 text-muted-foreground" />
-              <CardTitle className="text-lg" style={{ fontFamily: 'Inter, sans-serif' }}>Engagement Details</CardTitle>
+              <CardTitle className="text-lg" >Engagement Details</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -91,7 +91,7 @@ export default function Account() {
       {/* Pillar Coverage */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg" style={{ fontFamily: 'Inter, sans-serif' }}>Pillar Coverage</CardTitle>
+          <CardTitle className="text-lg" >Pillar Coverage</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -112,7 +112,7 @@ export default function Account() {
       {/* Communication Preferences */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg" style={{ fontFamily: 'Inter, sans-serif' }}>Communication Preferences</CardTitle>
+          <CardTitle className="text-lg" >Communication Preferences</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

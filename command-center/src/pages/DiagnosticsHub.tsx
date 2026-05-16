@@ -91,34 +91,35 @@ const DiagnosticsHub = () => (
                 boxShadow: diag.accent ? `0 0 30px -8px ${diag.color}20` : undefined,
               } as React.CSSProperties}
             >
-            {/* Color accent bar */}
-            <div className="h-0.5 w-10 rounded-full" style={{ backgroundColor: diag.color, boxShadow: `0 0 8px ${diag.color}80` }} />
+              {/* Color accent bar */}
+              <div className="h-0.5 w-10 rounded-full" style={{ backgroundColor: diag.color, boxShadow: `0 0 8px ${diag.color}80` }} />
 
-            <div className="flex-1">
-              <h3 className="text-sm font-semibold text-white mb-1.5 leading-snug">{diag.name}</h3>
-              <p className="text-xs text-slate-500 leading-relaxed">{diag.desc}</p>
-            </div>
-
-            <div className="flex items-center justify-between pt-3 border-t border-white/[0.04]">
-              <div className="flex items-center gap-1.5">
-                <Clock className="w-3 h-3 text-slate-600" />
-                <span className="text-[10px] font-mono text-slate-600">{diag.time}</span>
-                {diag.lastRun && (
-                  <>
-                    <span className="text-slate-700 mx-1">·</span>
-                    <span className="text-[10px] font-mono text-slate-600">Last: {diag.lastRun}</span>
-                  </>
-                )}
+              <div className="flex-1">
+                <h3 className="text-sm font-semibold text-white mb-1.5 leading-snug">{diag.name}</h3>
+                <p className="text-xs text-slate-500 leading-relaxed">{diag.desc}</p>
               </div>
-              <Link to="/detector/flow">
-                <button
-                  className="flex items-center gap-1.5 text-xs font-semibold transition-colors duration-200 hover:opacity-80"
-                  style={{ color: diag.color }}
-                >
-                  {diag.lastRun ? <><RotateCcw className="w-3 h-3" /> Retake</> : <>Start <ArrowRight className="w-3 h-3" /></>}
-                </button>
-              </Link>
-            </div>
+
+              <div className="flex items-center justify-between pt-3 border-t border-white/[0.04]">
+                <div className="flex items-center gap-1.5">
+                  <Clock className="w-3 h-3 text-slate-600" />
+                  <span className="text-[10px] font-mono text-slate-600">{diag.time}</span>
+                  {diag.lastRun && (
+                    <>
+                      <span className="text-slate-700 mx-1">·</span>
+                      <span className="text-[10px] font-mono text-slate-600">Last: {diag.lastRun}</span>
+                    </>
+                  )}
+                </div>
+                <Link to="/detector/flow">
+                  <button
+                    className="flex items-center gap-1.5 text-xs font-semibold transition-colors duration-200 hover:opacity-80"
+                    style={{ color: diag.color }}
+                  >
+                    {diag.lastRun ? <><RotateCcw className="w-3 h-3" /> Retake</> : <>Start <ArrowRight className="w-3 h-3" /></>}
+                  </button>
+                </Link>
+              </div>
+            </PremiumCard>
           </motion.div>
         ))}
       </motion.div>

@@ -416,18 +416,25 @@ export function AnimatedAIChat({ messages, onSendMessage, isTyping, credits, sug
                             ))}
                             
                             {isTyping && (
-                                <motion.div 
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    className="flex gap-4 max-w-[85%]"
+                                <motion.div
+                                    initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
+                                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                                    transition={{ duration: 0.3 }}
+                                    className="flex gap-3 max-w-[85%]"
                                 >
-                                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-violet-500/20 border border-violet-500/30 text-violet-400">
-                                        <Sparkles className="w-5 h-5" />
+                                    <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 bg-violet-500/15 border border-violet-500/25 text-violet-400 mt-1">
+                                        <Sparkles className="w-4 h-4" />
                                     </div>
-                                    <div className="p-4 rounded-2xl bg-[#0A0A0C] border border-white/[0.08] backdrop-blur-md rounded-tl-sm flex items-center gap-1.5">
-                                        <div className="w-2 h-2 rounded-full bg-violet-400 animate-bounce" style={{ animationDelay: '0ms' }} />
-                                        <div className="w-2 h-2 rounded-full bg-violet-400 animate-bounce" style={{ animationDelay: '150ms' }} />
-                                        <div className="w-2 h-2 rounded-full bg-violet-400 animate-bounce" style={{ animationDelay: '300ms' }} />
+                                    <div className="px-4 py-3 rounded-2xl bg-black/50 border border-white/[0.06] backdrop-blur-md rounded-tl-sm flex items-center gap-2">
+                                        {[0, 1, 2].map(i => (
+                                            <motion.div
+                                                key={i}
+                                                className="w-1.5 h-1.5 rounded-full bg-violet-400"
+                                                animate={{ y: [0, -4, 0], opacity: [0.4, 1, 0.4] }}
+                                                transition={{ duration: 0.8, repeat: Infinity, delay: i * 0.15, ease: "easeInOut" }}
+                                            />
+                                        ))}
+                                        <span className="text-xs text-white/20 font-mono ml-1">Analyzing your diagnosis...</span>
                                     </div>
                                 </motion.div>
                             )}
