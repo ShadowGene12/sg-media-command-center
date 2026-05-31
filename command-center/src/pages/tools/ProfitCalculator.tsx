@@ -31,7 +31,7 @@ const ProfitCalculator = () => {
     <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex items-center gap-4">
         <Link to="/tools">
-          <Button variant="ghost" size="icon" className="rounded-full bg-white/5 border border-white/10 hover:bg-white/20">
+          <Button aria-label="Go back to tools" variant="ghost" size="icon" className="rounded-full bg-white/5 border border-white/10 hover:bg-white/20">
             <ArrowLeft className="h-4 w-4" />
           </Button>
         </Link>
