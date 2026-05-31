@@ -1,0 +1,3 @@
+## 2024-05-31 - AnimatedBackground re-renders
+**Learning:** `AnimatedBackground` is rendered at the root of `App.tsx` outside of the routes but inside `CommandCenterLayout`. If `App` re-renders due to route changes or state changes, `AnimatedBackground` will be re-rendered as well, which is an expensive DOM operation that causes a subtle flicker of the animated CSS background or performance drop during page transitions.
+**Action:** Wrapped `AnimatedBackground` in `React.memo` so it only renders once. It does not accept any props, so the memoization will always hit and correctly skip re-renders.
