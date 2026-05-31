@@ -1,3 +1,4 @@
+import React from 'react';
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -9,7 +10,8 @@ interface PageHeaderProps {
   children?: React.ReactNode;
 }
 
-export const PageHeader = ({ label, title, description, className, children }: PageHeaderProps) => (
+// Wrapped in React.memo to prevent unnecessary re-renders of static header elements
+export const PageHeader = React.memo(({ label, title, description, className, children }: PageHeaderProps) => (
   <motion.div
     initial={{ opacity: 0, y: 10 }}
     animate={{ opacity: 1, y: 0 }}
@@ -25,10 +27,13 @@ export const PageHeader = ({ label, title, description, className, children }: P
     )}
     {children}
   </motion.div>
-);
+));
+PageHeader.displayName = 'PageHeader';
 
-export const SectionLabel = ({ children, className }: { children: React.ReactNode; className?: string }) => (
+// Wrapped in React.memo to prevent unnecessary re-renders of static label
+export const SectionLabel = React.memo(({ children, className }: { children: React.ReactNode; className?: string }) => (
   <p className={cn("text-sm font-mono text-slate-400 uppercase tracking-widest", className)}>
     {children}
   </p>
-);
+));
+SectionLabel.displayName = 'SectionLabel';
