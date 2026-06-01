@@ -1,4 +1,9 @@
-export const AnimatedBackground = () => (
+import React from 'react';
+
+// ⚡ Bolt Optimization:
+// Wrapped in React.memo to prevent unnecessary re-renders during route
+// transitions inside CommandCenterLayout (which uses useLocation).
+export const AnimatedBackground = React.memo(() => (
   <div className="fixed inset-0 pointer-events-none z-[-2] bg-[#050505]">
     {/* Static radial base — no animation, no flicker */}
     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[100vw] h-[100vh] bg-[radial-gradient(ellipse_at_center,rgba(109,74,230,0.07),transparent_65%)]" />
@@ -25,4 +30,4 @@ export const AnimatedBackground = () => (
       }}
     />
   </div>
-);
+));

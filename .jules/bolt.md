@@ -1,0 +1,3 @@
+## 2024-06-01 - Application Shell Re-renders from Routing Hooks
+**Learning:** The `CommandCenterLayout` uses the `useLocation` hook to animate route transitions. This causes the entire layout component to re-render on every single route change. Because static components like `AnimatedBackground` are rendered directly within this layout without memoization, they unnecessarily re-render on every navigation, which can cause jank on lower-end devices given the CSS complexities.
+**Action:** Always wrap heavy, static presentational components (like backgrounds) with `React.memo()` when they are rendered inside layout components or routing boundaries that use hooks like `useLocation` or `useNavigate`.
