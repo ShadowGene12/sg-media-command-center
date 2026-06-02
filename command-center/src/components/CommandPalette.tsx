@@ -105,7 +105,7 @@ export function CommandPalette() {
             placeholder="Search pages, SOPs, actions..."
             autoFocus
           />
-          <button onClick={() => setCommandPaletteOpen(false)} className="p-1.5 text-white/25 hover:text-white/60 transition-colors flex-shrink-0">
+          <button aria-label="Close command palette" onClick={() => setCommandPaletteOpen(false)} className="p-1.5 text-white/25 hover:text-white/60 transition-colors flex-shrink-0 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/50">
             <X className="h-4 w-4" />
           </button>
         </div>

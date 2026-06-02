@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Bell, Menu, ChevronRight, Clock, Zap, LogOut, User, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useCommandStore } from "@/lib/store";
 import { useLocation, Link, useNavigate } from "react-router-dom";
@@ -166,7 +167,7 @@ export const AppHeader = () => {
       <header className="h-16 border-b border-white/[0.04] bg-black/20 backdrop-blur-xl flex items-center justify-between px-4 md:px-6 sticky top-0 z-40">
         {/* Left: mobile menu + breadcrumb */}
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" className="md:hidden text-slate-400 hover:text-white hover:bg-white/[0.04]">
+          <Button aria-label="Open menu" variant="ghost" size="icon" className="md:hidden text-slate-400 hover:text-white hover:bg-white/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/50">
             <Menu className="h-5 w-5" />
           </Button>
 
@@ -192,8 +193,9 @@ export const AppHeader = () => {
         <div className="flex items-center gap-3">
           {/* ⌘K trigger */}
           <button
+            aria-label="Open command palette"
             onClick={() => setCommandPaletteOpen(true)}
-            className="hidden md:flex items-center gap-3 h-9 px-4 rounded-xl bg-white/[0.04] border border-white/[0.06] text-slate-500 hover:text-white hover:bg-white/[0.07] hover:border-white/[0.10] transition-all duration-200 group"
+            className="hidden md:flex items-center gap-3 h-9 px-4 rounded-xl bg-white/[0.04] border border-white/[0.06] text-slate-500 hover:text-white hover:bg-white/[0.07] hover:border-white/[0.10] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/50 transition-all duration-200 group"
           >
             <span className="text-sm">Search...</span>
             <div className="flex items-center gap-1 ml-2">
@@ -206,20 +208,28 @@ export const AppHeader = () => {
           <TrialWidget trialDay={trialDay} tier={tier} />
 
           {/* Notification bell */}
-          <button
-            onClick={() => setNotifOpen(true)}
-            className="relative p-2 rounded-xl text-slate-500 hover:text-white hover:bg-white/[0.04] transition-all duration-200"
-          >
-            <Bell className="h-5 w-5" />
-            {unreadCount > 0 && (
-              <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-violet-500 shadow-[0_0_6px_rgba(109,74,230,0.8)]" />
-            )}
-          </button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                aria-label="Notifications"
+                onClick={() => setNotifOpen(true)}
+                className="relative p-2 rounded-xl text-slate-500 hover:text-white hover:bg-white/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/50 transition-all duration-200"
+              >
+                <Bell className="h-5 w-5" />
+                {unreadCount > 0 && (
+                  <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-violet-500 shadow-[0_0_6px_rgba(109,74,230,0.8)]" />
+                )}
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Notifications</p>
+            </TooltipContent>
+          </Tooltip>
 
           {/* User avatar + dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center justify-center w-8 h-8 rounded-full bg-violet-500/20 border border-violet-500/30 text-violet-400 hover:bg-violet-500/30 transition-all text-xs font-mono font-bold">
+              <button aria-label="User menu" className="flex items-center justify-center w-8 h-8 rounded-full bg-violet-500/20 border border-violet-500/30 text-violet-400 hover:bg-violet-500/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/50 transition-all text-xs font-mono font-bold">
                 {profile?.first_name?.[0]?.toUpperCase() ?? <User className="w-4 h-4" />}
               </button>
             </DropdownMenuTrigger>
