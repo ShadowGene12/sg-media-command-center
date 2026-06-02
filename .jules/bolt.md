@@ -1,0 +1,3 @@
+## 2024-06-02 - Prevent App Shell Re-renders from Routing Hooks
+**Learning:** Using `useLocation()` or similar routing hooks directly in a top-level layout component (like `CommandCenterLayout`) causes the entire layout, including heavy components like `AnimatedBackground` or `AppSidebar`, to re-render on every route change. This leads to wasted render cycles and potential performance bottlenecks in the application shell.
+**Action:** Extract routing hooks and the route content wrapper (like `<Outlet />` and `<AnimatePresence>`) into a separate, lower-level component (e.g., `AnimatedOutlet`). Render this extracted component inside the layout, ensuring that only the specific route content re-renders when the route changes, while the shell components remain un-affected.

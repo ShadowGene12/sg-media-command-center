@@ -103,8 +103,32 @@ const ClientAccount = React.lazy(() => import("./pages/client/Account"));
 
 const queryClient = new QueryClient();
 
-const CommandCenterLayout = () => {
+// ⚡ Bolt: Extracted AnimatedOutlet to prevent app shell re-renders
+// By moving useLocation() to a child component, only the page content re-renders on route change,
+// not the entire layout (AppSidebar, Header, Background, etc).
+const AnimatedOutlet = () => {
   const location = useLocation();
+  return (
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={location.pathname}
+        initial={{ opacity: 0, y: 15, scale: 0.99, filter: "blur(4px)" }}
+        animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+        exit={{ opacity: 0, y: -15, scale: 0.99, filter: "blur(4px)" }}
+        transition={{ duration: 0.4, type: "spring", bounce: 0, ease: "circOut" }}
+        className="w-full h-full"
+      >
+        <ErrorBoundary>
+          <Suspense fallback={<PageSkeleton />}>
+            <Outlet />
+          </Suspense>
+        </ErrorBoundary>
+      </motion.div>
+    </AnimatePresence>
+  );
+};
+
+const CommandCenterLayout = () => {
   return (
     <div className="flex h-screen w-full bg-transparent overflow-hidden">
       <AnimatedBackground />
@@ -114,22 +138,7 @@ const CommandCenterLayout = () => {
         <AppHeader />
         <MobileNav />
         <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-8 pb-20 md:pb-8 relative">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={location.pathname}
-              initial={{ opacity: 0, y: 15, scale: 0.99, filter: "blur(4px)" }}
-              animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
-              exit={{ opacity: 0, y: -15, scale: 0.99, filter: "blur(4px)" }}
-              transition={{ duration: 0.4, type: "spring", bounce: 0, ease: "circOut" }}
-              className="w-full h-full"
-            >
-              <ErrorBoundary>
-                <Suspense fallback={<PageSkeleton />}>
-                  <Outlet />
-                </Suspense>
-              </ErrorBoundary>
-            </motion.div>
-          </AnimatePresence>
+          <AnimatedOutlet />
         </main>
       </div>
     </div>
