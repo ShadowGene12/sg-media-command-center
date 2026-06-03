@@ -1,0 +1,3 @@
+## 2024-05-18 - Missing ARIA Labels and Focus States on Custom Header Elements
+**Learning:** Custom interactive elements (like `button` tags used for icons, searches, and avatars) throughout the application often lack proper `aria-label`s for screen readers and visible focus states (`focus-visible:ring-2`) for keyboard navigation. The use of Tailwind classes sometimes leads to missing native accessibility attributes.
+**Action:** When creating or reviewing custom buttons, especially icon-only ones, always ensure an `aria-label` is present and include `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/50` (or similar theme-appropriate ring) for keyboard accessibility.
