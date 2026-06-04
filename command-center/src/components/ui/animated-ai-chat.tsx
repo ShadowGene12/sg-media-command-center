@@ -558,6 +558,7 @@ export function AnimatedAIChat({ messages, onSendMessage, isTyping, credits, sug
                                     whileTap={{ scale: 0.94 }}
                                     disabled={credits <= 0}
                                     className="p-2 text-slate-400 hover:text-white rounded-lg transition-colors relative group disabled:opacity-50"
+                                    aria-label="Attach file"
                                 >
                                     <Paperclip className="w-4 h-4" />
                                 </motion.button>
@@ -574,6 +575,7 @@ export function AnimatedAIChat({ messages, onSendMessage, isTyping, credits, sug
                                         "p-2 text-slate-400 hover:text-white rounded-lg transition-colors relative group disabled:opacity-50",
                                         showCommandPalette && "bg-white/[0.08] text-white"
                                     )}
+                                    aria-label="Open command palette"
                                 >
                                     <Command className="w-4 h-4" />
                                 </motion.button>
@@ -592,6 +594,7 @@ export function AnimatedAIChat({ messages, onSendMessage, isTyping, credits, sug
                                         ? "bg-violet-600 hover:bg-violet-500 text-white shadow-[0_0_15px_rgba(109,74,230,0.4)]"
                                         : "bg-white/[0.05] text-slate-400"
                                 )}
+                                aria-label="Send message"
                             >
                                 {isTyping ? (
                                     <LoaderIcon className="w-4 h-4 animate-[spin_2s_linear_infinite]" />

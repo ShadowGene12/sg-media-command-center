@@ -1,0 +1,3 @@
+## 2024-06-04 - Adding ARIA labels to custom animated component buttons
+**Learning:** Found multiple instances where heavily styled custom components (using framer-motion and lucide-react icons) like `<motion.button>` or generic `<button>` elements were missing ARIA labels, severely limiting screen reader accessibility for core features (e.g., chat commands, notifications, and navigation).
+**Action:** When implementing or reviewing custom interactive elements, especially those involving `framer-motion`'s `<motion.button>` or complex icon integrations, explicitly verify that `aria-label` attributes are included to ensure keyboard and screen reader accessibility.
