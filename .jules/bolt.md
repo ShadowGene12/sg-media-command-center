@@ -1,0 +1,3 @@
+## 2024-06-04 - Application Shell Re-Renders
+**Learning:** The application shell (`CommandCenterLayout` in `App.tsx`) uses `useLocation()` to handle route transitions. This causes the entire layout, including heavy background components like `AnimatedBackground`, to re-render on every route change. This is a common pattern in React apps that can lead to performance issues if static components are not memoized.
+**Action:** Always verify if static visual components at the top level of the application tree (especially those containing complex CSS or SVG elements) are wrapped in `React.memo()` to prevent unnecessary re-renders when route or global state changes.
