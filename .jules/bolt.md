@@ -1,0 +1,3 @@
+## 2024-06-05 - Global Background Re-renders
+**Learning:** The `AnimatedBackground` component relies solely on CSS animations and pure CSS elements, but was not memoized. Because it sits high in the layout hierarchy (`CommandCenterLayout`), it is subjected to frequent re-renders during route navigation and layout-level state updates.
+**Action:** Always verify if static, heavy, or globally positioned visual components (especially those using complex CSS like masks, gradients, and blurs) are memoized (`React.memo`), to prevent them from taking part in the React reconciliation cycle unnecessarily.
