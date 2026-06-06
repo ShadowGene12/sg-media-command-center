@@ -46,7 +46,9 @@ const NAV_GROUPS = [
 
 export function CommandPalette() {
   const navigate = useNavigate();
-  const { isCommandPaletteOpen, setCommandPaletteOpen } = useCommandStore();
+  // ⚡ Bolt: Prevent unnecessary re-renders by using specific Zustand selectors
+  const isCommandPaletteOpen = useCommandStore(state => state.isCommandPaletteOpen);
+  const setCommandPaletteOpen = useCommandStore(state => state.setCommandPaletteOpen);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
