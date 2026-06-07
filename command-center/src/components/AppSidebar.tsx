@@ -26,7 +26,9 @@ export const AppSidebar = () => {
   const location = useLocation();
   const [isExpanded, setIsExpanded] = useState(false);
   const { profile } = useAuth();
-  const { tier } = useCommandStore();
+  // ⚡ Bolt: Use individual state selectors to prevent unnecessary re-renders of the AppSidebar
+  // when other unrelated properties in the commandStore change.
+  const tier = useCommandStore((state) => state.tier);
 
   const displayName = profile?.business_name || (profile ? `${profile.first_name} ${profile.last_name}`.trim() : "Command Center") || "Command Center";
   const tierLabel = tier === "dfy" ? "Done For You" : tier === "trial" ? "Trial" : tier.charAt(0).toUpperCase() + tier.slice(1);

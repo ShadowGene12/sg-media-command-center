@@ -147,7 +147,11 @@ const TrialWidget = ({ trialDay, tier }: { trialDay: number; tier: string }) => 
 
 // ─── Main header ──────────────────────────────────────────────────────────────
 export const AppHeader = () => {
-  const { setCommandPaletteOpen, trialDay, tier } = useCommandStore();
+  // ⚡ Bolt: Use individual state selectors to prevent unnecessary re-renders of the AppHeader
+  // when other unrelated properties in the commandStore change.
+  const setCommandPaletteOpen = useCommandStore((state) => state.setCommandPaletteOpen);
+  const trialDay = useCommandStore((state) => state.trialDay);
+  const tier = useCommandStore((state) => state.tier);
   const { profile, signOut } = useAuth();
   const navigate = useNavigate();
   const [notifOpen, setNotifOpen] = useState(false);
