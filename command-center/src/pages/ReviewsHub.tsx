@@ -189,5 +189,6 @@ export default function ReviewsHub() {
         ))}
       </div>
     </div>
+    </div>
   );
 }

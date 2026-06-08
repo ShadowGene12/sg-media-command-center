@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -8,9 +8,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Check, X } from "lucide-react";
+import { Check, X, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
+import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
 
 const pricingTiers = [
   {
@@ -87,6 +89,48 @@ const pricingTiers = [
 export default function Pricing() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [loadingTier, setLoadingTier] = useState<string | null>(null);
+
+  const handleCheckout = async (tierName: string) => {
+    if (tierName === "Done For You") {
+      navigate("/onsite");
+      return;
+    }
+
+    if (!user) {
+      navigate("/signup");
+      return;
+    }
+
+    // Free tier logic (already on it, or redirect to settings)
+    if (tierName === "Free") {
+      navigate("/dashboard");
+      return;
+    }
+
+    try {
+      setLoadingTier(tierName);
+      // Map tier names to dummy Stripe Price IDs (replace with actual later)
+      const priceId = tierName === "Operator" ? "price_operator_mock" : "price_studio_mock";
+      
+      const { data, error } = await supabase.functions.invoke("create-checkout-session", {
+        body: { priceId, tierName, userId: user.id, email: user.email },
+      });
+
+      if (error) throw error;
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error("No checkout URL returned");
+      }
+    } catch (err: any) {
+      console.error(err);
+      toast.error("Stripe is not configured yet. Fallback to settings.");
+      navigate("/settings/billing");
+    } finally {
+      setLoadingTier(null);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#0B0819] text-white py-20 px-4 flex flex-col items-center">
@@ -148,18 +192,8 @@ export default function Pricing() {
             </CardContent>
             <CardFooter>
               <Button
-                onClick={() => {
-                  if (tier.name === "Done For You") {
-                    navigate("/onsite");
-                  } else {
-                    if (user) {
-                      navigate("/settings/billing");
-                    } else {
-                      navigate("/signup");
-                    }
-                  }
-                }}
-                disabled={tier.disabled}
+                onClick={() => handleCheckout(tier.name)}
+                disabled={tier.disabled || loadingTier === tier.name}
                 variant={tier.popular ? "default" : "outline"}
                 className={`w-full ${
                   tier.popular
@@ -167,6 +201,9 @@ export default function Pricing() {
                     : "border-white/10 hover:bg-white/5"
                 }`}
               >
+                {loadingTier === tier.name ? (
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                ) : null}
                 {tier.cta}
               </Button>
             </CardFooter>

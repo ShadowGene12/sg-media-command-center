@@ -160,49 +160,36 @@ export default function AIAdvisorHub() {
     // Save user message
     await saveMessage("user", text);
 
-    // Generate contextual response (placeholder until Claude API is wired)
+    // Generate contextual response via Edge Function
     const systemPrompt = buildSystemPrompt(diagnostic, trialDay);
-    const contextualResponses: Record<string, string> = {
-      default: diagnostic
-        ? `Based on your diagnostic, your primary bottleneck is ${(diagnostic.primary_pillar as string)?.replace(/_/g, " & ") ?? "Sales & Conversion"} with a score of ${(diagnostic.pillar_scores as Record<string, number>)?.[diagnostic.primary_pillar as string] ?? "1.8"}/5. The most impactful next step is implementing a documented sales process. Start with the "Perfect Sales Script Template" SOP in your library.`
-        : "I don't have your diagnostic data yet. Take the Bottleneck Detector first — it takes 4 minutes and I'll have your full 5-pillar context to work with.",
-      bottleneck: `Your primary bottleneck is ${(diagnostic?.primary_pillar as string)?.replace(/_/g, " & ") ?? "Sales & Conversion"} — scoring ${(diagnostic?.pillar_scores as Record<string, number>)?.[(diagnostic?.primary_pillar as string) ?? "sales"] ?? "1.8"}/5. The root cause is likely a documentation gap — your process exists in someone's head but not on paper. Fix: document your current best sales conversation as a 5-step process this week.`,
-      sop: "The SOP most relevant to your bottleneck is the 'Perfect Sales Script Template'. Open it in your library — it gives you the 5-step framework, objection scripts, and a close statement for your specific offer type.",
-      follow:
-        "A 5-touch follow-up sequence: Day 0 (same day) — confirmation email. Day 3 — value delivery, no ask. Day 7 — direct check-in. Day 14 — different channel (LinkedIn). Day 21 — the breakup email. The breakup gets a 40% response rate because people respond to finality.",
-    };
+    
+    try {
+      const { data, error } = await supabase.functions.invoke("ai-advisor", {
+        body: { messages: [...messages, userMsg], systemPrompt },
+      });
 
-    const lowerText = text.toLowerCase();
-    let response = contextualResponses.default;
-    if (
-      lowerText.includes("bottleneck") ||
-      lowerText.includes("score") ||
-      lowerText.includes("primary")
-    )
-      response = contextualResponses.bottleneck;
-    else if (
-      lowerText.includes("sop") ||
-      lowerText.includes("library") ||
-      lowerText.includes("template")
-    )
-      response = contextualResponses.sop;
-    else if (
-      lowerText.includes("follow") ||
-      lowerText.includes("sequence") ||
-      lowerText.includes("email")
-    )
-      response = contextualResponses.follow;
+      if (error) throw error;
 
-    setTimeout(async () => {
       const aiMsg: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: response,
+        content: data?.content || "I'm having trouble connecting to my neural net right now.",
       };
+
       setMessages((prev) => [...prev, aiMsg]);
       setIsTyping(false);
-      await saveMessage("assistant", response);
-    }, 1400);
+      await saveMessage("assistant", aiMsg.content);
+    } catch (err: any) {
+      console.error(err);
+      // Fallback response if Edge function fails/isn't deployed
+      const fallbackMsg: Message = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: `Error connecting to AI: ${err.message}. Please check if the 'ai-advisor' Edge Function is deployed and OPENAI_API_KEY is set.`,
+      };
+      setMessages((prev) => [...prev, fallbackMsg]);
+      setIsTyping(false);
+    }
   };
 
   const creditLabel =

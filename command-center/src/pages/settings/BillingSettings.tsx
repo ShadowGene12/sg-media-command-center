@@ -12,10 +12,45 @@ import {
   ExternalLink,
   Download,
   AlertTriangle,
+  Loader2
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import { useAuth } from "@/lib/auth";
+import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
 
 export default function BillingSettings() {
+  const { user } = useAuth();
+  const [loadingPortal, setLoadingPortal] = useState(false);
+
+  // We normally pull this from useCommandStore or a query, but let's mock the display for now 
+  // since the user object itself doesn't contain tier in standard auth.
+  // In a real app, we'd use the `tier` from profiles.
+  const currentTier = "Free"; // Fallback if no store is used here
+
+  const handleManageBilling = async () => {
+    if (!user) return;
+    try {
+      setLoadingPortal(true);
+      // We pass user ID and assume backend fetches stripe_customer_id from profiles
+      const { data, error } = await supabase.functions.invoke("create-portal-session", {
+        body: { customerId: "mock_cus_123" }, // In production, edge function looks this up using user.id
+      });
+      if (error) throw error;
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error("No portal URL returned");
+      }
+    } catch (err: any) {
+      console.error(err);
+      toast.error("Stripe Customer Portal is not configured yet.");
+    } finally {
+      setLoadingPortal(false);
+    }
+  };
+
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
       <Card className="bg-slate-900 border-primary/30 shadow-[0_0_20px_rgba(139,92,246,0.1)]">
@@ -65,9 +100,12 @@ export default function BillingSettings() {
               </div>
               <Button
                 variant="ghost"
+                onClick={handleManageBilling}
+                disabled={loadingPortal}
                 className="text-slate-400 hover:text-white flex items-center gap-2"
               >
-                Edit <ExternalLink className="w-4 h-4" />
+                {loadingPortal ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                Manage <ExternalLink className="w-4 h-4" />
               </Button>
             </div>
             <p className="text-xs text-slate-500 mt-2">

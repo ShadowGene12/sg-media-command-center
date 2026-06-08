@@ -18,6 +18,9 @@ import {
   Star,
   CheckSquare,
   Layout,
+  Shield,
+  Database,
+  Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PremiumBadge } from "./PremiumBadge";
@@ -134,6 +137,32 @@ export const AppSidebar = () => {
       ],
     },
   ];
+
+  if (profile?.is_admin) {
+    navGroups.push({
+      label: "Admin",
+      items: [
+        {
+          icon: Shield,
+          label: "Dashboard",
+          href: "/admin",
+          locked: false,
+        },
+        {
+          icon: Database,
+          label: "Manage SOPs",
+          href: "/admin/sops",
+          locked: false,
+        },
+        {
+          icon: Users,
+          label: "Manage Users",
+          href: "/admin/users",
+          locked: false,
+        },
+      ],
+    });
+  }
 
   return (
     <motion.aside

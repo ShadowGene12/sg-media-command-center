@@ -127,8 +127,6 @@ export default function SprintWizard() {
     onError: (e: Error) => toast.error(e.message),
   });
 
-  const selectedPillar = PILLARS.find((p) => p.value === form.pillar);
-
   const STEPS = [
     {
       title: "Pick your pillar",
