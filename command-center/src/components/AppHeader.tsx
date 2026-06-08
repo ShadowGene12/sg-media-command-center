@@ -166,7 +166,7 @@ export const AppHeader = () => {
       <header className="h-16 border-b border-white/[0.04] bg-black/20 backdrop-blur-xl flex items-center justify-between px-4 md:px-6 sticky top-0 z-40">
         {/* Left: mobile menu + breadcrumb */}
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" className="md:hidden text-slate-400 hover:text-white hover:bg-white/[0.04]">
+          <Button aria-label="Toggle navigation menu" variant="ghost" size="icon" className="md:hidden text-slate-400 hover:text-white hover:bg-white/[0.04]">
             <Menu className="h-5 w-5" />
           </Button>
 
@@ -207,6 +207,7 @@ export const AppHeader = () => {
 
           {/* Notification bell */}
           <button
+            aria-label="View notifications"
             onClick={() => setNotifOpen(true)}
             className="relative p-2 rounded-xl text-slate-500 hover:text-white hover:bg-white/[0.04] transition-all duration-200"
           >
@@ -219,7 +220,7 @@ export const AppHeader = () => {
           {/* User avatar + dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center justify-center w-8 h-8 rounded-full bg-violet-500/20 border border-violet-500/30 text-violet-400 hover:bg-violet-500/30 transition-all text-xs font-mono font-bold">
+              <button aria-label="User account menu" className="flex items-center justify-center w-8 h-8 rounded-full bg-violet-500/20 border border-violet-500/30 text-violet-400 hover:bg-violet-500/30 transition-all text-xs font-mono font-bold">
                 {profile?.first_name?.[0]?.toUpperCase() ?? <User className="w-4 h-4" />}
               </button>
             </DropdownMenuTrigger>
