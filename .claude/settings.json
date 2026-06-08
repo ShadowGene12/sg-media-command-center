@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__magic__21st_magic_component_builder",
+      "Bash(supabase --version)",
+      "Bash(npm list *)",
+      "Bash(npx supabase *)"
+    ]
+  }
+}
