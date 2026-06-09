@@ -1,0 +1,3 @@
+## 2025-02-12 - Zustand Component Re-renders in AppHeader
+**Learning:** React components (like `AppHeader`) that subscribe to an entire Zustand store using `const { a, b } = useStore()` will re-render whenever ANY value in the store changes, even if `a` and `b` haven't changed. In an application shell component like `AppHeader`, this can trigger a cascade of unnecessary re-renders across the entire app.
+**Action:** When subscribing to Zustand stores, always use specific state selectors (`const a = useStore(state => state.a);`) to ensure the component only re-renders when the exact state it depends on changes.
