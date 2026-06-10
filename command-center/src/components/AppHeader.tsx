@@ -266,6 +266,7 @@ export const AppHeader = () => {
             variant="ghost"
             size="icon"
             className="md:hidden text-slate-400 hover:text-white hover:bg-white/[0.04]"
+            aria-label="Toggle mobile menu"
           >
             <Menu className="h-5 w-5" />
           </Button>
@@ -317,7 +318,8 @@ export const AppHeader = () => {
           {/* Notification bell */}
           <button
             onClick={() => setNotifOpen(true)}
-            className="relative p-2 rounded-xl text-slate-500 hover:text-white hover:bg-white/[0.04] transition-all duration-200"
+            className="relative p-2 rounded-xl text-slate-500 hover:text-white hover:bg-white/[0.04] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/50"
+            aria-label={unreadCount > 0 ? `Notifications (${unreadCount} unread)` : "Notifications"}
           >
             <Bell className="h-5 w-5" />
             {unreadCount > 0 && (
@@ -328,7 +330,10 @@ export const AppHeader = () => {
           {/* User avatar + dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center justify-center w-8 h-8 rounded-full bg-violet-500/20 border border-violet-500/30 text-violet-400 hover:bg-violet-500/30 transition-all text-xs font-mono font-bold">
+              <button
+                className="flex items-center justify-center w-8 h-8 rounded-full bg-violet-500/20 border border-violet-500/30 text-violet-400 hover:bg-violet-500/30 transition-all text-xs font-mono font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/50"
+                aria-label="User profile menu"
+              >
                 {profile?.first_name?.[0]?.toUpperCase() ?? (
                   <User className="w-4 h-4" />
                 )}
