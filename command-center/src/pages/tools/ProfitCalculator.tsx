@@ -60,6 +60,7 @@ const ProfitCalculator = () => {
           <Button
             variant="ghost"
             size="icon"
+            aria-label="Go back"
             className="rounded-full bg-white/5 border border-white/10 hover:bg-white/20"
           >
             <ArrowLeft className="h-4 w-4" />
