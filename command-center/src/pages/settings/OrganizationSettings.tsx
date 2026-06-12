@@ -112,6 +112,7 @@ export default function OrganizationSettings() {
                     <Button
                       variant="ghost"
                       size="icon"
+                      aria-label="More options"
                       className="text-slate-400 hover:text-white"
                     >
                       <MoreVertical className="w-4 h-4" />
