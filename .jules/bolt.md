@@ -1,0 +1,3 @@
+## 2024-05-23 - Zustand Re-render Optimization
+**Learning:** Destructuring the entire Zustand store (e.g., `const { tier } = useCommandStore()`) instead of using specific state selectors (e.g., `const tier = useCommandStore(state => state.tier)`) causes components to unnecessarily re-render whenever *any* state in the store changes. In application shell components (Header, Sidebar), this creates significant performance bottlenecks.
+**Action:** Always use multiple individual selector calls when pulling values from Zustand stores to prevent unnecessary component updates, rather than destructuring the entire store.
