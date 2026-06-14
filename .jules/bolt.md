@@ -1,0 +1,3 @@
+## 2024-06-14 - Zustand Application Shell Re-renders
+**Learning:** The application shell components (`AppHeader`, `AppSidebar`, `CommandPalette`) were subscribing to the entire Zustand `useCommandStore`. This architectural bottleneck meant that *any* unrelated state change in the global store would cause the entire application shell to unnecessarily re-render, negatively impacting overall app performance, especially during rapid state updates.
+**Action:** Always refactor Zustand subscriptions to use specific state selectors (e.g., `const property = useStore((state) => state.property)`) rather than subscribing to the entire store object, particularly in high-level layout components that rarely need the full state context.
