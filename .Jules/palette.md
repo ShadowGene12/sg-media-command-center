@@ -1,0 +1,3 @@
+## 2024-06-15 - Missing ARIA Labels on Core Layout Patterns
+**Learning:** The application's core navigation and global components (e.g., AppHeader, CommandPalette) frequently utilize icon-only `<button>` elements without explicit `aria-label` attributes. This pattern poses a significant accessibility barrier, particularly for screen-reader users attempting to navigate the primary application shell.
+**Action:** When implementing or reviewing new global UI components or interactive icons, explicitly verify the presence of `aria-label` attributes to ensure foundational accessibility is maintained.
