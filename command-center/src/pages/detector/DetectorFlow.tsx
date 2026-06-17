@@ -248,7 +248,7 @@ const SGLogo = () => (
 
 const DetectorFlow = () => {
   const navigate = useNavigate();
-  const { startTrial } = useCommandStore();
+  const startTrial = useCommandStore((state) => state.startTrial);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, unknown>>({});
   const [isFinished, setIsFinished] = useState(false);

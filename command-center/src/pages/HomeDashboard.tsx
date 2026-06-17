@@ -112,7 +112,10 @@ const itemVars = {
 // ─── Main component ────────────────────────────────────────────
 const HomeDashboard = () => {
   useOnboarding("diy");
-  const { startTrial, trialDay, tier, dailyInsight } = useCommandStore();
+  const startTrial = useCommandStore((state) => state.startTrial);
+  const trialDay = useCommandStore((state) => state.trialDay);
+  const tier = useCommandStore((state) => state.tier);
+  const dailyInsight = useCommandStore((state) => state.dailyInsight);
   const { user, profile } = useAuth();
   const qc = useQueryClient();
   const timeOfDay =
