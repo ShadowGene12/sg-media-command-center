@@ -185,7 +185,7 @@ export default function AIAdvisorHub() {
       const fallbackMsg: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: `Error connecting to AI: ${err.message}. Please check if the 'ai-advisor' Edge Function is deployed and OPENAI_API_KEY is set.`,
+        content: "I'm having trouble connecting to my neural net right now. Please try again later.",
       };
       setMessages((prev) => [...prev, fallbackMsg]);
       setIsTyping(false);
