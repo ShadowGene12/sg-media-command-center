@@ -117,7 +117,9 @@ const NAV_GROUPS = [
 
 export function CommandPalette() {
   const navigate = useNavigate();
-  const { isCommandPaletteOpen, setCommandPaletteOpen } = useCommandStore();
+  // ⚡ Bolt: Using individual selectors to prevent CommandPalette re-rendering when unrelated store properties change
+  const isCommandPaletteOpen = useCommandStore(state => state.isCommandPaletteOpen);
+  const setCommandPaletteOpen = useCommandStore(state => state.setCommandPaletteOpen);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
