@@ -112,7 +112,8 @@ const cardVars = {
 };
 
 const Upgrade = () => {
-  const { tier, trialDay } = useCommandStore();
+  const tier = useCommandStore((state) => state.tier);
+  const trialDay = useCommandStore((state) => state.trialDay);
   const isExpiring = trialDay >= 5 && trialDay <= 7;
   const trialActive = trialDay >= 1 && trialDay <= 7;
 
