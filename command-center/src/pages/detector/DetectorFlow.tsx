@@ -248,7 +248,8 @@ const SGLogo = () => (
 
 const DetectorFlow = () => {
   const navigate = useNavigate();
-  const { startTrial } = useCommandStore();
+  // ⚡ Bolt: Using specific state selector to avoid Detector re-rendering on other store changes
+  const startTrial = useCommandStore((state) => state.startTrial);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, unknown>>({});
   const [isFinished, setIsFinished] = useState(false);

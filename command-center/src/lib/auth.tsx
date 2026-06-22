@@ -138,7 +138,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [trialAccess, setTrialAccess] = useState<TrialAccess | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
-  const { setTier, syncTrialFromDB } = useCommandStore();
+  // ⚡ Bolt: Destructured store actions specifically to avoid Context provider re-renders on every store update
+  const setTier = useCommandStore((state) => state.setTier);
+  const syncTrialFromDB = useCommandStore((state) => state.syncTrialFromDB);
 
   const loadUserData = async (userId: string) => {
     // Flush any pending diagnostic from a pre-auth detector session

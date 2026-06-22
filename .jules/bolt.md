@@ -1,0 +1,3 @@
+## 2024-10-24 - Zustand Full Subscriptions Causing Renders
+**Learning:** Components subscribing to the entire Zustand store (e.g., `const { tier } = useCommandStore()`) cause the component to re-render whenever ANY state in the store changes, even if it does not use that state.
+**Action:** Always use specific state selectors (e.g., `const tier = useCommandStore((state) => state.tier)`) or multiple individual selector calls to prevent widespread unnecessary re-renders.
