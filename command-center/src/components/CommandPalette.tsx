@@ -117,7 +117,9 @@ const NAV_GROUPS = [
 
 export function CommandPalette() {
   const navigate = useNavigate();
-  const { isCommandPaletteOpen, setCommandPaletteOpen } = useCommandStore();
+  const isCommandPaletteOpen = useCommandStore((state) => state.isCommandPaletteOpen);
+  const setCommandPaletteOpen = useCommandStore((state) => state.setCommandPaletteOpen);
+  // Bolt: Split selectors to prevent unnecessary re-renders of the application shell
   const [search, setSearch] = useState("");
 
   useEffect(() => {
