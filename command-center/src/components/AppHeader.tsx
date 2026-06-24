@@ -243,7 +243,10 @@ const TrialWidget = ({
 
 // ─── Main header ──────────────────────────────────────────────────────────────
 export const AppHeader = () => {
-  const { setCommandPaletteOpen, trialDay, tier } = useCommandStore();
+  // ⚡ Bolt: Optimize Zustand subscriptions to prevent unnecessary re-renders of the app header
+  const setCommandPaletteOpen = useCommandStore((state) => state.setCommandPaletteOpen);
+  const trialDay = useCommandStore((state) => state.trialDay);
+  const tier = useCommandStore((state) => state.tier);
   const { profile, signOut } = useAuth();
   const navigate = useNavigate();
   const [notifOpen, setNotifOpen] = useState(false);
