@@ -34,7 +34,9 @@ export function TierLockedCard({
   featureName = "This feature",
   forceUnlocked,
 }: TierLockedCardProps) {
-  const { tier, trialDay } = useCommandStore();
+  // ⚡ Bolt: Use specific selectors to prevent unnecessary re-renders
+  const tier = useCommandStore(state => state.tier);
+  const trialDay = useCommandStore(state => state.trialDay);
 
   // Derive locked state from the store
   let isLocked: boolean;
