@@ -17,7 +17,18 @@ serve(async (req) => {
       throw new Error("OpenAI API key not configured");
     }
 
-    const { messages, systemPrompt } = await req.json();
+    const body = await req.json();
+    const { messages, systemPrompt } = body;
+
+    if (!messages || !Array.isArray(messages)) {
+      throw new Error("Invalid or missing 'messages' array");
+    }
+    if (messages.length > 50) {
+      throw new Error("Too many messages in history");
+    }
+    if (!systemPrompt || typeof systemPrompt !== 'string' || systemPrompt.length > 2000) {
+      throw new Error("Invalid or missing 'systemPrompt'");
+    }
 
     const openaiPayload = {
       model: "gpt-4o",
