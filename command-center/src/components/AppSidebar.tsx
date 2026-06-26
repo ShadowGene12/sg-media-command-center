@@ -29,7 +29,9 @@ export const AppSidebar = () => {
   const location = useLocation();
   const [isExpanded, setIsExpanded] = useState(false);
   const { profile } = useAuth();
-  const { tier } = useCommandStore();
+
+  // ⚡ Bolt Optimization: Subscribe only to the specific state slice to avoid sidebar re-renders on other store changes
+  const tier = useCommandStore((state) => state.tier);
 
   const displayName =
     profile?.business_name ||

@@ -117,7 +117,14 @@ const NAV_GROUPS = [
 
 export function CommandPalette() {
   const navigate = useNavigate();
-  const { isCommandPaletteOpen, setCommandPaletteOpen } = useCommandStore();
+
+  // ⚡ Bolt Optimization: Subscribe only to required properties to avoid frequent re-renders from global store updates
+  const isCommandPaletteOpen = useCommandStore(
+    (state) => state.isCommandPaletteOpen,
+  );
+  const setCommandPaletteOpen = useCommandStore(
+    (state) => state.setCommandPaletteOpen,
+  );
   const [search, setSearch] = useState("");
 
   useEffect(() => {
