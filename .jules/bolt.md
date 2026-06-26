@@ -1,0 +1,3 @@
+## 2025-02-27 - Zustand Full Store Subscription Re-renders
+**Learning:** Components frequently subscribe to the entire Zustand store (e.g., `useCommandStore()`), which causes unnecessary re-renders of the application shell whenever any state changes, even if the component doesn't use that specific state. This is an architectural bottleneck.
+**Action:** Refactoring these to use specific state selectors (e.g., `useCommandStore(state => state.property)`) is a recommended performance optimization to prevent widespread unnecessary re-renders. Use multiple individual selector calls rather than assuming unverified imports like `useShallow`.
