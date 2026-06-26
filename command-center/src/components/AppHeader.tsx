@@ -265,6 +265,7 @@ export const AppHeader = () => {
           <Button
             variant="ghost"
             size="icon"
+            aria-label="Toggle menu"
             className="md:hidden text-slate-400 hover:text-white hover:bg-white/[0.04]"
           >
             <Menu className="h-5 w-5" />
