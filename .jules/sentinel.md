@@ -1,0 +1,4 @@
+## 2024-06-27 - [Fix IDOR in create-checkout-session]
+**Vulnerability:** In `create-checkout-session`, the client passed `userId` and `email` directly in the request body to create a Stripe checkout session, bypassing proper authentication and allowing Insecure Direct Object Reference (IDOR). Also, since `req.json()` was called twice, it threw a "Body has already been read" error.
+**Learning:** Client-provided user identity data should never be trusted. Edge functions must always verify the user's identity securely via the `Authorization` JWT header and Supabase `auth.getUser()`.
+**Prevention:** Always parse the JWT token securely (e.g. by instantiating a Supabase client using the incoming `Authorization` header and calling `getUser()`) rather than reading user attributes straight from `req.json()`.
