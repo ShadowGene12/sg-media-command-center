@@ -185,6 +185,7 @@ export function CommandPalette() {
             autoFocus
           />
           <button
+            aria-label="Close command palette"
             onClick={() => setCommandPaletteOpen(false)}
             className="p-1.5 text-white/25 hover:text-white/60 transition-colors flex-shrink-0"
           >
