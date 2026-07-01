@@ -1,0 +1,4 @@
+## 2024-07-01 - Supabase Edge Function Missing JWT Verification
+**Vulnerability:** Supabase Edge Functions (`create-checkout-session` and `create-portal-session`) did not verify JWTs, relying instead on unauthenticated client-provided `userId` and `email` data from the request body.
+**Learning:** In Supabase Edge Functions, JWTs from the Authorization header are not automatically verified. If you just parse the token or blindly trust user IDs from the body, you expose the endpoint to IDOR and authentication bypass. Also, `req.json()` can only be called once per request.
+**Prevention:** Always verify the user's identity by instantiating a Supabase client using the incoming Authorization header and calling `supabase.auth.getUser()` before proceeding with sensitive operations. Parse `req.json()` only once.
