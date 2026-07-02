@@ -265,7 +265,9 @@ export const AppHeader = () => {
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden text-slate-400 hover:text-white hover:bg-white/[0.04]"
+            aria-label="Open menu"
+            title="Open menu"
+            className="md:hidden text-slate-400 hover:text-white hover:bg-white/[0.04] focus-visible:ring-2 focus-visible:ring-violet-500"
           >
             <Menu className="h-5 w-5" />
           </Button>
@@ -317,7 +319,9 @@ export const AppHeader = () => {
           {/* Notification bell */}
           <button
             onClick={() => setNotifOpen(true)}
-            className="relative p-2 rounded-xl text-slate-500 hover:text-white hover:bg-white/[0.04] transition-all duration-200"
+            aria-label={unreadCount > 0 ? `${unreadCount} unread notifications` : "Notifications"}
+            title="Notifications"
+            className="relative p-2 rounded-xl text-slate-500 hover:text-white hover:bg-white/[0.04] transition-all duration-200 focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:outline-none"
           >
             <Bell className="h-5 w-5" />
             {unreadCount > 0 && (
@@ -328,7 +332,11 @@ export const AppHeader = () => {
           {/* User avatar + dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center justify-center w-8 h-8 rounded-full bg-violet-500/20 border border-violet-500/30 text-violet-400 hover:bg-violet-500/30 transition-all text-xs font-mono font-bold">
+              <button
+                aria-label="User account menu"
+                title="Account"
+                className="flex items-center justify-center w-8 h-8 rounded-full bg-violet-500/20 border border-violet-500/30 text-violet-400 hover:bg-violet-500/30 transition-all text-xs font-mono font-bold focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:outline-none"
+              >
                 {profile?.first_name?.[0]?.toUpperCase() ?? (
                   <User className="w-4 h-4" />
                 )}
