@@ -186,7 +186,9 @@ export function CommandPalette() {
           />
           <button
             onClick={() => setCommandPaletteOpen(false)}
-            className="p-1.5 text-white/25 hover:text-white/60 transition-colors flex-shrink-0"
+            aria-label="Close command palette"
+            title="Close"
+            className="p-1.5 text-white/25 hover:text-white/60 transition-colors flex-shrink-0 focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:outline-none rounded"
           >
             <X className="h-4 w-4" />
           </button>
