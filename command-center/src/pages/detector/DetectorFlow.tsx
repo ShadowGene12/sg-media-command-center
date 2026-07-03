@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { SGLogo } from "@/components/SGLogo";
 import { useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -10,182 +11,208 @@ import { cn } from "@/lib/utils";
 import { supabase } from "@/lib/supabase";
 import { useCommandStore } from "@/lib/store";
 
-// ─── 15 Questions — 3 per pillar, operator-grade language ─────
+// ─── 15 Visceral Scenario Questions ─────────────────────────────
 const QUESTIONS = [
   // ── Market & Offer Clarity ───────────────────────────────────
   {
     id: 1,
     pillar: "Market & Offer Clarity",
     color: "#6D4AE6",
-    weight: 3,
-    text: "Can you describe your ideal customer in one sentence specific enough that it would exclude the wrong people?",
-    type: "scale10" as const,
-    scaleLabels: ["Anyone who'll pay", "Precisely defined ICP"],
+    text: "If a prospect gets on a call and has the budget, but exhibits early red flags, how does your team handle the disqualification?",
+    type: "scenario",
+    options: [
+      { id: "A", score: 3, text: "We use a strict Anti-ICP framework. If they hit specific red flags, we politely route them elsewhere, regardless of the revenue." },
+      { id: "B", score: 2, text: "We know who we don't want, but if the contract value is high enough, we will usually try to customize the offer and make it work." },
+      { id: "C", score: 1, text: "Qualification is almost entirely budget-based. If they can afford our fees, we pitch the features of the product." },
+      { id: "D", score: 0, text: "We rarely disqualify anyone. We need the cash flow, so we close the deal and just figure out the fulfillment headaches later." },
+    ]
   },
   {
     id: 2,
     pillar: "Market & Offer Clarity",
     color: "#6D4AE6",
-    weight: 2,
-    text: "Which best describes your core offer right now?",
-    type: "single-select" as const,
+    text: "How does your pricing structure and core offer adapt when pitching to a new lead?",
+    type: "scenario",
     options: [
-      "One clear offer — same price, same outcome, same process for everyone",
-      "Multiple tiers or packages — clearly defined",
-      "Custom proposals — outcome and price vary by client",
-      "No clear structure — it depends on the conversation",
-    ],
+      { id: "A", score: 3, text: "It doesn't. We have one core offer, a set price, and a defined process. The client buys our system." },
+      { id: "B", score: 2, text: "We have defined tiers, but we frequently discount or adjust scope on the fly to win the deal." },
+      { id: "C", score: 1, text: "Every proposal is custom. We scope the work based on what the client asks for and what we think they can pay." },
+      { id: "D", score: 0, text: "We don't have a standardized offer. We pitch whatever service the lead seems most interested in." },
+    ]
   },
   {
     id: 3,
     pillar: "Market & Offer Clarity",
     color: "#6D4AE6",
-    weight: 1,
-    text: "Would a stranger reading your website understand what you sell and who it is for within 10 seconds?",
-    type: "scale10" as const,
-    scaleLabels: ["No — it's vague", "Yes — crystal clear"],
+    text: "If a stranger looked at your landing page right now, what would they conclude?",
+    type: "scenario",
+    options: [
+      { id: "A", score: 3, text: "They would know exactly who we serve, the specific metric we improve, and our mechanism for doing it within 10 seconds." },
+      { id: "B", score: 2, text: "They would understand our general industry, but might have to read a few paragraphs to figure out exactly what we deliver." },
+      { id: "C", score: 1, text: "They would see a lot of buzzwords (\"innovative,\" \"synergy\") but wouldn't know the precise outcome we drive." },
+      { id: "D", score: 0, text: "It's highly ambiguous. We try to appeal to everyone, so the messaging is completely generic." },
+    ]
   },
   // ── Customer Acquisition ─────────────────────────────────────
   {
     id: 4,
     pillar: "Customer Acquisition",
     color: "#378ADD",
-    weight: 3,
-    text: "How predictable is your lead flow month-to-month? Could you forecast next month's leads within 20%?",
-    type: "scale10" as const,
-    scaleLabels: ["Completely unpredictable", "Highly predictable system"],
+    text: "If your lead volume needed to double next month, what exact levers would you pull?",
+    type: "scenario",
+    options: [
+      { id: "A", score: 3, text: "We have a predictable acquisition engine. I know exactly how much ad spend or outbound volume to increase to hit that target." },
+      { id: "B", score: 2, text: "I have a general idea of what works, but scaling it would rely heavily on testing and hoping performance holds up." },
+      { id: "C", score: 1, text: "We rely on word-of-mouth and referrals. I couldn't artificially double it; we would just have to hustle harder." },
+      { id: "D", score: 0, text: "Complete guesswork. Our leads come in randomly, and I have no control over the volume." },
+    ]
   },
   {
     id: 5,
     pillar: "Customer Acquisition",
     color: "#378ADD",
-    weight: 2,
-    text: "Which acquisition channels are currently producing paying customers? (Select all that apply)",
-    type: "multi-select" as const,
+    text: "A qualified prospect downloads your core asset or joins your list, but doesn't book a call. What is their exact experience over the next 30 days?",
+    type: "scenario",
     options: [
-      "Outbound email or DMs",
-      "Paid advertising (Meta, Google, LinkedIn)",
-      "Content or SEO (inbound)",
-      "Referrals from existing clients",
-      "Partnerships or affiliates",
-      "Events, conferences, or in-person",
-      "None — leads come in without a system",
-    ],
+      { id: "A", score: 3, text: "They drop into an automated nurture sequence with high-value assets and retargeting until they are ready." },
+      { id: "B", score: 2, text: "We put them on an email newsletter list, but the content isn't highly targeted or frequent." },
+      { id: "C", score: 1, text: "Sales might manually follow up once or twice, but then they are forgotten." },
+      { id: "D", score: 0, text: "Nothing. If they don't buy immediately, they are dead to us." },
+    ]
   },
   {
     id: 6,
     pillar: "Customer Acquisition",
     color: "#378ADD",
-    weight: 1,
-    text: "What is the single biggest thing limiting your lead volume right now?",
-    type: "short-text" as const,
+    text: "What is the primary source of your highest-paying, lowest-friction clients?",
+    type: "scenario",
+    options: [
+      { id: "A", score: 3, text: "Our owned, scalable systems (paid ads, outbound sequences, or SEO) that run without founder intervention." },
+      { id: "B", score: 2, text: "Organic content or founder-led networking. It works, but it requires constant manual effort to maintain." },
+      { id: "C", score: 1, text: "Unpredictable referrals. We get good clients, but we don't know when the next one is coming." },
+      { id: "D", score: 0, text: "We don't have a reliable source for high-quality clients. We take whatever we can get." },
+    ]
   },
   // ── Sales & Conversion ───────────────────────────────────────
   {
     id: 7,
     pillar: "Sales & Conversion",
     color: "#1D9E75",
-    weight: 3,
-    text: "Do you have a documented sales process that anyone on your team could follow and produce consistent results?",
-    type: "scale10" as const,
-    scaleLabels: ["Everything is improvised", "Fully documented and trained"],
+    text: "If you hired a new sales rep tomorrow, how long until they could close deals at your current win rate?",
+    type: "scenario",
+    options: [
+      { id: "A", score: 3, text: "Under 14 days. We have recorded call libraries, objection-handling scripts, and a fully documented sales process." },
+      { id: "B", score: 2, text: "A month or two. They would shadow me and learn via osmosis, but the process isn't formally documented." },
+      { id: "C", score: 1, text: "Months. Closing relies heavily on my personal founder authority and industry knowledge." },
+      { id: "D", score: 0, text: "Impossible. I am the only one who can sell our services because every pitch is made up on the spot." },
+    ]
   },
   {
     id: 8,
     pillar: "Sales & Conversion",
     color: "#1D9E75",
-    weight: 2,
-    text: "Where do most qualified leads go cold in your pipeline?",
-    type: "single-select" as const,
+    text: "Where do your best, highest-paying deals actually go to die right now?",
+    type: "scenario",
     options: [
-      "No follow-up system — they fall through the cracks",
-      "After the first call or demo — they ghost",
-      "After the proposal — price or timing objections",
-      "The initial conversation — they do not book at all",
-      "Our conversion rate is actually solid — we close most qualified leads",
-    ],
+      { id: "A", score: 3, text: "We lose very few qualified deals. The ones we do lose are due to genuine timing or hard budget constraints." },
+      { id: "B", score: 2, text: "In the proposal phase. We send out custom decks and then get hit with \"we need to think about it.\"" },
+      { id: "C", score: 1, text: "Post-discovery ghosting. We have great first calls, but they never show up for the close." },
+      { id: "D", score: 0, text: "We don't even get them on the calendar. Our show-up rate and initial booking rate is bleeding leads." },
+    ]
   },
   {
     id: 9,
     pillar: "Sales & Conversion",
     color: "#1D9E75",
-    weight: 1,
-    text: "How confident are you in your ability to handle objections without discounting or losing the deal?",
-    type: "scale10" as const,
-    scaleLabels: [
-      "I often lose deals to objections",
-      "I handle every objection effectively",
-    ],
+    text: "When a prospect pushes back heavily on price, what is your team's default reflex?",
+    type: "scenario",
+    options: [
+      { id: "A", score: 3, text: "We hold firm, isolate the objection, and reframe the conversation around the cost of inaction. We do not discount." },
+      { id: "B", score: 2, text: "We try to defend the value, but will usually cave and offer a 10-20% discount to save the deal." },
+      { id: "C", score: 1, text: "We immediately down-sell them to a cheaper package or reduce the scope of work." },
+      { id: "D", score: 0, text: "We panic and match whatever price they say they can afford, destroying our margins." },
+    ]
   },
   // ── Profit Optimization ──────────────────────────────────────
   {
     id: 10,
     pillar: "Profit Optimization",
     color: "#F59E0B",
-    weight: 3,
-    text: "Do you know your net profit margin, gross margin, and per-client profitability right now — without checking?",
-    type: "scale10" as const,
-    scaleLabels: ["No visibility", "Know my numbers precisely"],
+    text: "Do you know your exact net profit margin and gross margin per service line right now—without checking?",
+    type: "scenario",
+    options: [
+      { id: "A", score: 3, text: "Yes, precisely. I know exactly which clients and services are subsidizing the others." },
+      { id: "B", score: 2, text: "I know the overall company margin, but I don't track profitability per client or per service line." },
+      { id: "C", score: 1, text: "I have a rough estimate based on my bank balance, but my accounting is always a month behind." },
+      { id: "D", score: 0, text: "No visibility at all. I just hope there's cash left over at the end of the year." },
+    ]
   },
   {
     id: 11,
     pillar: "Profit Optimization",
     color: "#F59E0B",
-    weight: 2,
-    text: "Which best describes your current pricing?",
-    type: "single-select" as const,
+    text: "When a client demands out-of-scope work, how is it handled operationally?",
+    type: "scenario",
     options: [
-      "Value-based — priced relative to the outcome delivered",
-      "Cost-plus — priced based on my costs plus a markup",
-      "Market rate — I price similarly to competitors",
-      "Inconsistent — it varies significantly by client",
-      "I do not have a clear pricing model",
-    ],
+      { id: "A", score: 3, text: "We point to the SLA. If they want it, we send a change order and charge them for it immediately." },
+      { id: "B", score: 2, text: "We'll usually do it for free the first time to \"keep them happy,\" but warn them it's out of scope." },
+      { id: "C", score: 1, text: "We just do the work. We're terrified of them churning, so we absorb the cost." },
+      { id: "D", score: 0, text: "We don't even have a defined scope of work, so everything feels like an expectation we have to meet." },
+    ]
   },
   {
     id: 12,
     pillar: "Profit Optimization",
     color: "#F59E0B",
-    weight: 1,
-    text: "How systematically do you review and reduce costs or scope creep on active client work?",
-    type: "scale10" as const,
-    scaleLabels: ["Never review — costs drift", "Monthly review with action"],
+    text: "If you lost your largest client today, what happens to the business?",
+    type: "scenario",
+    options: [
+      { id: "A", score: 3, text: "A minor speed bump. No single client accounts for more than 10-15% of our total revenue." },
+      { id: "B", score: 2, text: "We would have to tighten our belts and pause hiring, but we wouldn't miss payroll." },
+      { id: "C", score: 1, text: "Panic mode. We would immediately have to lay off team members or slash owner comp." },
+      { id: "D", score: 0, text: "We would go out of business. They account for 40%+ of our revenue and dictate our operations." },
+    ]
   },
   // ── Financial & Performance Control ─────────────────────────
   {
     id: 13,
     pillar: "Financial & Performance Control",
     color: "#D85A30",
-    weight: 3,
-    text: "How clearly do you track business performance with specific KPIs reviewed on a regular cadence?",
-    type: "scale10" as const,
-    scaleLabels: [
-      "No tracking — I work on feel",
-      "Weekly KPI review with a dashboard",
-    ],
+    text: "How clearly do you track business performance with specific KPIs?",
+    type: "scenario",
+    options: [
+      { id: "A", score: 3, text: "We have a live, automated dashboard tracking 5-7 core KPIs. We review them weekly as a leadership team." },
+      { id: "B", score: 2, text: "We pull reports manually at the end of the month to see how we did, but it's reactive, not proactive." },
+      { id: "C", score: 1, text: "The only KPI we really track is top-line revenue and maybe cash in the bank." },
+      { id: "D", score: 0, text: "No tracking at all. We operate entirely on feeling and daily fires." },
+    ]
   },
   {
     id: 14,
     pillar: "Financial & Performance Control",
     color: "#D85A30",
-    weight: 2,
-    text: "How would you describe your current cash flow visibility?",
-    type: "single-select" as const,
+    text: "If you stopped working in the business for 30 days, what breaks first?",
+    type: "scenario",
     options: [
-      "I have a live cash flow model and can forecast the next 90 days",
-      "I check my bank balance regularly but have no formal model",
-      "I only look at cash when something feels off",
-      "I have no real visibility — cash flow surprises me regularly",
-    ],
+      { id: "A", score: 3, text: "Nothing. The team executes the SOPs, sales continue, and fulfillment runs without me." },
+      { id: "B", score: 2, text: "Growth would stall. Fulfillment would survive, but new client acquisition relies entirely on me." },
+      { id: "C", score: 1, text: "Client relationships would fracture. I am still the main point of contact for our biggest accounts." },
+      { id: "D", score: 0, text: "Everything collapses. I am the central bottleneck for approvals, sales, and putting out fires." },
+    ]
   },
   {
     id: 15,
     pillar: "Financial & Performance Control",
     color: "#D85A30",
-    weight: 1,
-    text: "What is the most pressing financial or performance challenge you are facing right now?",
-    type: "short-text" as const,
-  },
+    text: "How would you describe your current cash flow visibility?",
+    type: "scenario",
+    options: [
+      { id: "A", score: 3, text: "I have a rolling 90-day cash flow forecast. I know exactly when cash will be tight months in advance." },
+      { id: "B", score: 2, text: "I check my accounts weekly and have a general idea of pending invoices, but no formal model." },
+      { id: "C", score: 1, text: "I wait for my bookkeeper to tell me if we had a good month. Cash flow often surprises me." },
+      { id: "D", score: 0, text: "I live invoice to invoice. Payroll is constantly a stressful event." },
+    ]
+  }
 ];
 
 const PILLAR_ORDER = [
@@ -209,42 +236,20 @@ function computePillarScores(answers: Record<number, unknown>) {
   const scores: Record<string, number> = {};
   PILLAR_ORDER.forEach((pillar) => {
     const pillarQs = QUESTIONS.filter((q) => q.pillar === pillar);
-    let weighted = 0;
-    let totalWeight = 0;
+    let totalScore = 0;
     pillarQs.forEach((q) => {
       const ans = answers[q.id];
-      let raw = 0;
-      if (q.type === "scale10" && typeof ans === "number") {
-        raw = (ans / 10) * 5; // convert 1–10 to 0–5
-      } else if (q.type === "single-select" && typeof ans === "string") {
-        const idx = (q.options ?? []).indexOf(ans);
-        const len = (q.options ?? []).length;
-        raw = idx >= 0 ? ((len - 1 - idx) / (len - 1)) * 5 : 2.5;
-      } else if (q.type === "multi-select" && Array.isArray(ans)) {
-        const lastOption = (q.options ?? [])[(q.options?.length ?? 1) - 1];
-        raw = ans.includes(lastOption) ? 1 : Math.min(5, ans.length * 1.5);
-      } else if (q.type === "short-text") {
-        raw = 2.5; // neutral — assessed qualitatively in future
+      if (typeof ans === "number") {
+        totalScore += ans;
       }
-      weighted += raw * q.weight;
-      totalWeight += q.weight;
     });
-    scores[PILLAR_SLUGS[pillar]] =
-      totalWeight > 0 ? parseFloat((weighted / totalWeight).toFixed(1)) : 2.5;
+    // Max score per pillar is 9 (3 questions * 3 max score). Map 0-9 to 0-5.
+    scores[PILLAR_SLUGS[pillar]] = parseFloat(((totalScore / 9) * 5).toFixed(1));
   });
   return scores;
 }
 
-const SGLogo = () => (
-  <div className="flex items-center gap-2">
-    <div className="bg-violet-600 text-white p-1 rounded-md">
-      <span className="font-black tracking-tighter text-sm">SG</span>
-    </div>
-    <span className="text-white tracking-widest text-xs uppercase font-medium">
-      Media
-    </span>
-  </div>
-);
+
 
 const DetectorFlow = () => {
   const navigate = useNavigate();
@@ -254,6 +259,7 @@ const DetectorFlow = () => {
   const [isFinished, setIsFinished] = useState(false);
   const [email, setEmail] = useState("");
   const [businessName, setBusinessName] = useState("");
+  const [whatsapp, setWhatsapp] = useState("+91 ");
   const [submitting, setSubmitting] = useState(false);
 
   const question = QUESTIONS[currentIndex];
@@ -263,26 +269,32 @@ const DetectorFlow = () => {
   const qInPillar = pillarQs.findIndex((q) => q.id === question.id) + 1;
 
   const handleNext = () => {
-    if (currentIndex < QUESTIONS.length - 1) setCurrentIndex((c) => c + 1);
-    else setIsFinished(true);
+    if (currentIndex >= QUESTIONS.length - 1) {
+      setIsFinished(true);
+    } else {
+      setCurrentIndex((c) => Math.min(c + 1, QUESTIONS.length - 1));
+    }
   };
   const handlePrev = () => {
-    if (currentIndex > 0) setCurrentIndex((c) => c - 1);
+    setCurrentIndex((c) => Math.max(c - 1, 0));
   };
 
-  // Keyboard shortcuts — 1-9 for scale answers, Enter to advance
+  // Keyboard shortcuts — A,B,C,D for scenarios, Enter/Right to advance
   useEffect(() => {
-    if (isFinished) return;
+    if (isFinished || !question) return;
     const handler = (e: KeyboardEvent) => {
       if (
         e.target instanceof HTMLTextAreaElement ||
         e.target instanceof HTMLInputElement
       )
         return;
-      if (question.type === "scale10") {
-        const n = parseInt(e.key);
-        if (n >= 1 && n <= 9) handleAnswer(n);
-        if (e.key === "0") handleAnswer(10);
+      
+      if (question.type === "scenario") {
+        const key = e.key.toUpperCase();
+        if (["A", "B", "C", "D"].includes(key)) {
+          const opt = question.options?.find(o => o.id === key);
+          if (opt) handleAnswer(opt.score);
+        }
       }
       if (e.key === "ArrowRight" && answers[question.id] !== undefined)
         handleNext();
@@ -442,6 +454,7 @@ const DetectorFlow = () => {
     // Store email in localStorage as fallback
     localStorage.setItem("sg_user_email", email);
     localStorage.setItem("sg_business_name", businessName);
+    localStorage.setItem("sg_whatsapp", whatsapp);
     localStorage.setItem("sg_trial_start", new Date().toISOString());
     startTrial();
 
@@ -486,7 +499,7 @@ const DetectorFlow = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-1.5">
                 <label className="text-white/40 text-[10px] font-mono uppercase tracking-widest">
-                  Work Email
+                  Work Email <span className="text-violet-400">*</span>
                 </label>
                 <Input
                   type="email"
@@ -508,6 +521,20 @@ const DetectorFlow = () => {
                   value={businessName}
                   onChange={(e) => setBusinessName(e.target.value)}
                   className="h-12 bg-white/[0.04] border-white/[0.08] text-white placeholder:text-white/20 rounded-xl text-sm focus-visible:ring-0 focus-visible:border-violet-500/60 transition-colors"
+                />
+              </div>
+              <div className="space-y-1.5 pt-2">
+                <label className="text-white/60 text-[10px] font-mono uppercase tracking-widest flex items-center justify-between border-b border-white/10 pb-1">
+                  <span>WhatsApp Number <span className="text-emerald-400">*</span></span>
+                  <span className="text-emerald-400/80 text-[8px] bg-emerald-500/10 px-1.5 py-0.5 rounded tracking-normal">Direct Access</span>
+                </label>
+                <Input
+                  type="tel"
+                  placeholder="+91 98765 43210"
+                  required
+                  value={whatsapp}
+                  onChange={(e) => setWhatsapp(e.target.value)}
+                  className="h-12 bg-emerald-500/[0.02] border-emerald-500/20 text-white placeholder:text-white/20 rounded-xl text-sm focus-visible:ring-0 focus-visible:border-emerald-500/60 transition-colors"
                 />
               </div>
               <div className="pt-1">
@@ -585,8 +612,8 @@ const DetectorFlow = () => {
           </div>
 
           <div className="flex justify-between items-center mb-3">
-            <span className="font-mono text-[10px] text-white/30 uppercase tracking-widest">
-              Q{currentIndex + 1} of {QUESTIONS.length}
+            <span className="font-mono text-[10px] text-white/40 tracking-widest">
+              [SYS.DIAG // {(currentIndex + 1).toString().padStart(2, '0')}:{QUESTIONS.length}]
             </span>
             <span className="font-mono text-[10px] text-white/20 uppercase tracking-widest">
               {question.pillar} · {qInPillar} of {pillarQs.length}
@@ -636,53 +663,15 @@ const DetectorFlow = () => {
 
               {/* Answers */}
               <div className="mb-8">
-                {question.type === "scale10" && (
-                  <div className="space-y-4">
-                    <div className="flex justify-between text-[10px] text-white/25 uppercase tracking-widest font-mono px-1 mb-2">
-                      <span>{question.scaleLabels?.[0] ?? "Poor"}</span>
-                      <span className="text-white/15">
-                        Press 1-9 or 0 for 10
-                      </span>
-                      <span>{question.scaleLabels?.[1] ?? "Excellent"}</span>
-                    </div>
-                    <div className="grid grid-cols-5 md:grid-cols-10 gap-2">
-                      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((val) => {
-                        const selected = answers[question.id] === val;
-                        return (
-                          <motion.button
-                            key={val}
-                            onClick={() => handleAnswer(val)}
-                            whileHover={{ scale: 1.06, y: -2 }}
-                            whileTap={{ scale: 0.95 }}
-                            transition={{
-                              type: "spring",
-                              stiffness: 400,
-                              damping: 20,
-                            }}
-                            className={cn(
-                              "h-14 md:h-16 rounded-xl border font-mono text-lg font-medium transition-all duration-200",
-                              selected
-                                ? "border-violet-500/60 bg-violet-500/20 text-violet-300 shadow-[0_0_20px_rgba(109,74,230,0.35)]"
-                                : "border-white/[0.07] bg-black/40 backdrop-blur-sm text-white/60 hover:border-violet-500/30 hover:bg-violet-500/[0.07] hover:text-white hover:shadow-[0_0_16px_rgba(109,74,230,0.15)]",
-                            )}
-                          >
-                            {val}
-                          </motion.button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-
-                {question.type === "single-select" && (
-                  <div className="space-y-2.5">
+                {question.type === "scenario" && (
+                  <div className="flex flex-col gap-3">
                     {question.options?.map((opt) => {
-                      const selected = answers[question.id] === opt;
+                      const selected = answers[question.id] === opt.score;
                       return (
                         <motion.button
-                          key={opt}
-                          onClick={() => handleAnswer(opt)}
-                          whileHover={{ x: 4 }}
+                          key={opt.id}
+                          onClick={() => handleAnswer(opt.score)}
+                          whileHover={{ y: -2 }}
                           whileTap={{ scale: 0.99 }}
                           transition={{
                             type: "spring",
@@ -690,101 +679,41 @@ const DetectorFlow = () => {
                             damping: 25,
                           }}
                           className={cn(
-                            "w-full p-5 rounded-2xl border text-left font-light leading-snug transition-all duration-200",
+                            "w-full p-6 rounded-xl text-left font-light leading-relaxed transition-all duration-300 relative overflow-hidden group",
                             selected
-                              ? "border-violet-500/50 bg-violet-500/[0.12] text-white shadow-[0_0_24px_rgba(109,74,230,0.2)]"
-                              : "border-white/[0.07] bg-black/40 backdrop-blur-sm text-white/70 hover:border-violet-500/30 hover:bg-violet-500/[0.06] hover:text-white hover:shadow-[0_0_18px_rgba(109,74,230,0.12)]",
+                              ? "bg-violet-500/[0.08] text-white border border-violet-500/40 shadow-[0_0_30px_rgba(109,74,230,0.15)]"
+                              : "bg-[rgba(255,255,255,0.02)] backdrop-blur-md text-white/70 border border-white/[0.05] border-t-white/[0.12] hover:bg-[rgba(255,255,255,0.04)] hover:border-white/[0.1] hover:text-white hover:shadow-[0_4px_20px_rgba(0,0,0,0.5)]",
                           )}
                         >
-                          <div className="flex items-start justify-between gap-3">
-                            <span className="text-sm">{opt}</span>
-                            {selected && (
-                              <motion.div
-                                initial={{ scale: 0 }}
-                                animate={{ scale: 1 }}
-                                transition={{
-                                  type: "spring",
-                                  stiffness: 500,
-                                  damping: 25,
-                                }}
+                          <div className="flex items-start gap-4">
+                            <div className="flex-1 text-[15px] md:text-[16px]">
+                              {opt.text}
+                            </div>
+                            <div className="hidden sm:flex flex-row items-center justify-center shrink-0 gap-3">
+                              {selected && (
+                                <motion.div
+                                  initial={{ scale: 0, opacity: 0 }}
+                                  animate={{ scale: 1, opacity: 1 }}
+                                  transition={{ type: "spring", stiffness: 500, damping: 25 }}
+                                >
+                                  <CheckCircle2 className="w-5 h-5 text-violet-400" />
+                                </motion.div>
+                              )}
+                              <div
+                                className={cn(
+                                  "px-2 py-1 rounded text-[10px] font-mono tracking-widest transition-colors",
+                                  selected
+                                    ? "bg-violet-500/20 text-violet-300"
+                                    : "bg-white/[0.05] text-white/30 group-hover:text-white/50"
+                                )}
                               >
-                                <CheckCircle2 className="w-5 h-5 text-violet-400 flex-shrink-0 mt-0.5" />
-                              </motion.div>
-                            )}
+                                [ {opt.id} ]
+                              </div>
+                            </div>
                           </div>
                         </motion.button>
                       );
                     })}
-                  </div>
-                )}
-
-                {question.type === "multi-select" && (
-                  <div className="space-y-2.5">
-                    <p className="text-xs text-white/25 font-mono mb-3">
-                      Select all that apply
-                    </p>
-                    {question.options?.map((opt) => {
-                      const selected = (
-                        (answers[question.id] as string[]) || []
-                      ).includes(opt);
-                      return (
-                        <motion.button
-                          key={opt}
-                          onClick={() => handleAnswer(opt)}
-                          whileTap={{ scale: 0.99 }}
-                          className={cn(
-                            "w-full p-5 rounded-2xl border text-left font-light text-sm transition-all duration-200 flex items-center justify-between gap-3",
-                            selected
-                              ? "border-emerald-500/40 bg-emerald-500/[0.08] text-white shadow-[0_0_20px_rgba(16,185,129,0.12)]"
-                              : "border-white/[0.07] bg-black/40 backdrop-blur-sm text-white/70 hover:border-white/[0.14] hover:bg-white/[0.03] hover:text-white",
-                          )}
-                        >
-                          <span>{opt}</span>
-                          <div
-                            className={cn(
-                              "w-5 h-5 rounded-full border flex items-center justify-center flex-shrink-0 transition-all duration-200",
-                              selected
-                                ? "border-emerald-500/60 bg-emerald-500/20"
-                                : "border-white/[0.15]",
-                            )}
-                          >
-                            {selected && (
-                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                            )}
-                          </div>
-                        </motion.button>
-                      );
-                    })}
-                    <div className="pt-2">
-                      <Button
-                        onClick={handleNext}
-                        className="h-11 px-6 bg-violet-600 hover:bg-violet-500 text-white rounded-xl font-medium shadow-[0_0_16px_rgba(109,74,230,0.3)]"
-                      >
-                        Continue <ArrowRight className="ml-2 h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                )}
-
-                {question.type === "short-text" && (
-                  <div className="space-y-3">
-                    <Textarea
-                      placeholder="Type your answer here..."
-                      className="min-h-[140px] text-base p-5 bg-black/40 backdrop-blur-sm border-white/[0.08] text-white placeholder:text-white/20 resize-none rounded-2xl focus-visible:ring-0 focus-visible:border-violet-500/50 transition-colors font-light"
-                      value={(answers[question.id] as string) || ""}
-                      onChange={(e) =>
-                        setAnswers({
-                          ...answers,
-                          [question.id]: e.target.value,
-                        })
-                      }
-                    />
-                    <Button
-                      onClick={handleNext}
-                      className="h-12 px-8 bg-violet-600 hover:bg-violet-500 text-white rounded-xl font-medium shadow-[0_0_18px_rgba(109,74,230,0.3)] hover:shadow-[0_0_26px_rgba(109,74,230,0.4)] transition-all"
-                    >
-                      Save & Continue <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
                   </div>
                 )}
               </div>
@@ -797,19 +726,19 @@ const DetectorFlow = () => {
               variant="ghost"
               onClick={handlePrev}
               disabled={currentIndex === 0}
-              className="text-white/30 hover:text-white hover:bg-white/[0.04] disabled:opacity-20 rounded-xl"
+              className="text-white/60 hover:text-white hover:bg-white/[0.08] disabled:opacity-20 rounded-xl"
             >
               <ArrowLeft className="mr-2 h-4 w-4" /> Back
             </Button>
-            <div className="hidden md:flex items-center gap-3 text-[9px] font-mono text-white/15">
+            <div className="hidden md:flex items-center gap-3 text-[10px] font-mono text-white/60">
               <span>← → navigate</span>
               <span>·</span>
-              <span>1-9 select</span>
+              <span>A-D select</span>
             </div>
             <Button
               variant="ghost"
               onClick={handleNext}
-              className="text-white/30 hover:text-white hover:bg-white/[0.04] rounded-xl"
+              className="text-white/60 hover:text-white hover:bg-white/[0.08] rounded-xl"
             >
               Skip <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
