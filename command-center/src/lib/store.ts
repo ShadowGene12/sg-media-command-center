@@ -234,6 +234,9 @@ interface CommandStore {
   // UI
   isCommandPaletteOpen: boolean;
   setCommandPaletteOpen: (open: boolean) => void;
+
+  isDailyIntelOpen: boolean;
+  setDailyIntelOpen: (open: boolean) => void;
 }
 
 // ─── Store ────────────────────────────────────────────────────────────────────
@@ -287,6 +290,9 @@ export const useCommandStore = create<CommandStore>((set) => ({
 
   isCommandPaletteOpen: false,
   setCommandPaletteOpen: (open) => set({ isCommandPaletteOpen: open }),
+
+  isDailyIntelOpen: false,
+  setDailyIntelOpen: (open) => set({ isDailyIntelOpen: open }),
 
   toggleDiyAction: (id) =>
     set((state) => {
