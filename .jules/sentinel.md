@@ -1,0 +1,4 @@
+## 2024-07-03 - [CRITICAL] Edge Function Authentication Bypass
+**Vulnerability:** IDOR/Authentication Bypass via client-supplied `userId` and `email` in payload.
+**Learning:** Supabase Edge Functions do not automatically verify JWTs in the Authorization header. Extracting user identity directly from the `req.json()` payload allows attackers to impersonate other users. Furthermore, calling `req.json()` multiple times on the request stream throws an error.
+**Prevention:** Always instantiate the Supabase client using the request's Authorization header and retrieve the user context securely using `supabase.auth.getUser()`. Never trust client-provided user IDs for sensitive operations.
