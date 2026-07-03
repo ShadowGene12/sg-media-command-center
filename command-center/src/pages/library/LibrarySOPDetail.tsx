@@ -13,6 +13,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase, type SOP } from "@/lib/supabase";
 import { useAuth } from "@/lib/auth";
 import { PremiumCard } from "@/components/PremiumCard";
+import { PremiumAssetGuard } from "@/components/PremiumAssetGuard";
 import { motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import { FALLBACK_SOPS } from "./LibraryHub";
@@ -213,7 +214,9 @@ export default function LibrarySOPDetail() {
           prose-hr:border-white/[0.08]
         "
         >
-          <ReactMarkdown>{sop.content}</ReactMarkdown>
+          <PremiumAssetGuard assetType="SOP" featureName={sop.title}>
+            <ReactMarkdown>{sop.content}</ReactMarkdown>
+          </PremiumAssetGuard>
         </div>
       </PremiumCard>
 

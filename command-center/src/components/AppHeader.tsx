@@ -243,7 +243,7 @@ const TrialWidget = ({
 
 // ─── Main header ──────────────────────────────────────────────────────────────
 export const AppHeader = () => {
-  const { setCommandPaletteOpen, trialDay, tier } = useCommandStore();
+  const { setCommandPaletteOpen, setDailyIntelOpen, trialDay, tier, dailyInsight } = useCommandStore();
   const { profile, signOut } = useAuth();
   const navigate = useNavigate();
   const [notifOpen, setNotifOpen] = useState(false);
@@ -313,6 +313,18 @@ export const AppHeader = () => {
 
           {/* Trial countdown / tier badge */}
           <TrialWidget trialDay={trialDay} tier={tier} />
+
+          {/* Daily Intel Trigger (only if trial and insight exists) */}
+          {tier === "trial" && dailyInsight && (
+            <button
+              onClick={() => setDailyIntelOpen(true)}
+              className="relative flex items-center justify-center w-9 h-9 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-400 hover:bg-violet-500/20 hover:border-violet-500/30 transition-all duration-200 group"
+              aria-label="Open Daily Intel"
+            >
+              <Zap className="h-4 w-4" />
+              <span className="absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full bg-violet-500 shadow-[0_0_8px_rgba(139,92,246,0.8)] animate-pulse" />
+            </button>
+          )}
 
           {/* Notification bell */}
           <button

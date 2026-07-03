@@ -23,6 +23,7 @@ import { AppHeader } from "./components/AppHeader";
 import { CommandPalette } from "./components/CommandPalette";
 import { AnimatedBackground } from "./components/AnimatedBackground";
 import { MobileNav } from "./components/MobileNav";
+import { DailyIntelDrawer } from "./components/DailyIntelDrawer";
 
 // Premium Loading Screen
 const PageLoader = () => (
@@ -149,6 +150,7 @@ const CommandCenterLayout = () => {
       <AnimatedBackground />
       <CommandPalette />
       <AppSidebar />
+      <DailyIntelDrawer />
       <div className="flex flex-col flex-1 min-w-0 z-10 overflow-hidden">
         <AppHeader />
         <MobileNav />

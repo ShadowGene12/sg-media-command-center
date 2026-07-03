@@ -3,6 +3,7 @@ import { Bot, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UpgradeModal } from "@/components/UpgradeModal";
 import { AnimatedAIChat } from "@/components/ui/animated-ai-chat";
+import { PremiumAssetGuard } from "@/components/PremiumAssetGuard";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 import { useCommandStore } from "@/lib/store";
@@ -253,13 +254,15 @@ export default function AIAdvisorHub() {
         className="flex-1 relative rounded-2xl overflow-hidden border border-white/[0.05] bg-black/20 shadow-2xl backdrop-blur-md"
         style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}
       >
-        <AnimatedAIChat
-          messages={messages}
-          onSendMessage={handleSend}
-          isTyping={isTyping}
-          credits={credits}
-          suggestions={SUGGESTIONS}
-        />
+        <PremiumAssetGuard assetType="AI Advisor" allowDay6Bypass={true}>
+          <AnimatedAIChat
+            messages={messages}
+            onSendMessage={handleSend}
+            isTyping={isTyping}
+            credits={credits}
+            suggestions={SUGGESTIONS}
+          />
+        </PremiumAssetGuard>
       </div>
     </div>
   );
