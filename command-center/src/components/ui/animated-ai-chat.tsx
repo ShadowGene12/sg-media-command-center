@@ -565,7 +565,7 @@ export function AnimatedAIChat({
                     >
                       <FileUp className="w-3 h-3 text-violet-400" />
                       <span>{file}</span>
-                      <button
+                      <button aria-label="Remove attachment"
                         onClick={() => removeAttachment(index)}
                         className="text-slate-500 hover:text-white transition-colors ml-1"
                       >
@@ -580,7 +580,7 @@ export function AnimatedAIChat({
             <div className="p-3 pt-2 border-t border-white/[0.05] flex items-center justify-between gap-4">
               <div className="flex items-center gap-1.5 pl-2">
                 <motion.button
-                  type="button"
+                  type="button" aria-label="Attach file"
                   onClick={handleAttachFile}
                   whileTap={{ scale: 0.94 }}
                   disabled={credits <= 0}
@@ -589,7 +589,7 @@ export function AnimatedAIChat({
                   <Paperclip className="w-4 h-4" />
                 </motion.button>
                 <motion.button
-                  type="button"
+                  type="button" aria-label="Toggle command palette"
                   data-command-button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -607,7 +607,7 @@ export function AnimatedAIChat({
               </div>
 
               <motion.button
-                type="button"
+                type="button" aria-label="Send message"
                 onClick={handleSendMessage}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
