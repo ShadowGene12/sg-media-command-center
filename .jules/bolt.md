@@ -1,0 +1,3 @@
+## 2024-05-18 - Zustand Full Subscriptions in AppHeader
+**Learning:** Components subscribing to the entire Zustand store without selectors (e.g., `const { property } = useCommandStore()` instead of `const property = useCommandStore(state => state.property)`) cause unnecessary React re-renders for the entire component tree whenever any unrelated state in the store changes. In a heavily used layout component like AppHeader, this is a significant architectural bottleneck.
+**Action:** Always use multiple individual selector calls when reading from Zustand stores instead of object destructuring to ensure components only re-render when the specific state they care about changes.
