@@ -330,6 +330,7 @@ export const AppHeader = () => {
           <button
             onClick={() => setNotifOpen(true)}
             className="relative p-2 rounded-xl text-slate-500 hover:text-white hover:bg-white/[0.04] transition-all duration-200"
+            aria-label="Open notifications"
           >
             <Bell className="h-5 w-5" />
             {unreadCount > 0 && (
