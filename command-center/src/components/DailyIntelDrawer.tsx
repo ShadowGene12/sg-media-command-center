@@ -63,6 +63,7 @@ export const DailyIntelDrawer = () => {
                 <button
                   onClick={() => setDailyIntelOpen(false)}
                   className="p-2 text-slate-500 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+                  aria-label="Close daily intel"
                 >
                   <X className="w-5 h-5" />
                 </button>
