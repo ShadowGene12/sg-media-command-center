@@ -243,7 +243,12 @@ const TrialWidget = ({
 
 // ─── Main header ──────────────────────────────────────────────────────────────
 export const AppHeader = () => {
-  const { setCommandPaletteOpen, setDailyIntelOpen, trialDay, tier, dailyInsight } = useCommandStore();
+  // Bolt: Optimize re-renders by using individual state selectors instead of subscribing to the entire store
+  const setCommandPaletteOpen = useCommandStore((state) => state.setCommandPaletteOpen);
+  const setDailyIntelOpen = useCommandStore((state) => state.setDailyIntelOpen);
+  const trialDay = useCommandStore((state) => state.trialDay);
+  const tier = useCommandStore((state) => state.tier);
+  const dailyInsight = useCommandStore((state) => state.dailyInsight);
   const { profile, signOut } = useAuth();
   const navigate = useNavigate();
   const [notifOpen, setNotifOpen] = useState(false);
