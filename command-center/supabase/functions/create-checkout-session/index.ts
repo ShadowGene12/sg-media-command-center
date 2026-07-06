@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1";
 import Stripe from "https://esm.sh/stripe@12.0.0?target=deno";
 
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") ?? "", {
@@ -26,10 +27,19 @@ serve(async (req) => {
       throw new Error("Missing priceId");
     }
 
-    // Since we don't have Supabase Auth context imported securely in this minimal function,
-    // we assume the JWT is passed and we decode it or pass the user ID from the client.
-    // For production, always verify the JWT via Supabase JS client.
-    const { userId, email } = await req.json();
+    // Initialize Supabase client securely with the auth header
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+      { global: { headers: { Authorization: req.headers.get('Authorization') ?? '' } } }
+    );
+
+    // Securely retrieve the user associated with the JWT
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      throw new Error("Unauthorized");
+    }
 
     // Create Stripe Checkout Session
     const session = await stripe.checkout.sessions.create({
@@ -41,10 +51,10 @@ serve(async (req) => {
         },
       ],
       mode: "subscription",
-      customer_email: email,
-      client_reference_id: userId,
+      customer_email: user.email,
+      client_reference_id: user.id,
       metadata: {
-        userId: userId,
+        userId: user.id,
         tierName: tierName,
       },
       success_url: `${req.headers.get("origin")}/dashboard?checkout=success`,
