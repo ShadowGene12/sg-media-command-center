@@ -1,0 +1,1 @@
+## 2024-07-07 - Missing ARIA Labels on Icon Buttons\n**Learning:** In the command-center app, custom animated components (e.g., `framer-motion`s `<motion.button>`) and complex icon integrations frequently lack `aria-label` attributes.\n**Action:** Explicitly verify and add them to ensure keyboard and screen reader accessibility.
