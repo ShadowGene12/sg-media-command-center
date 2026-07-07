@@ -69,7 +69,8 @@ Always reference this data when giving recommendations. Don't ask for informatio
 
 export default function AIAdvisorHub() {
   const { user } = useAuth();
-  const { tier, trialDay } = useCommandStore();
+  const tier = useCommandStore((state) => state.tier);
+  const trialDay = useCommandStore((state) => state.trialDay);
   const [messages, setMessages] = useState<Message[]>([GREETING]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);

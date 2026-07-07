@@ -18,7 +18,8 @@ export const PremiumAssetGuard = ({
   allowDay6Bypass = false,
   slug,
 }: PremiumAssetGuardProps) => {
-  const { tier, trialDay } = useCommandStore();
+  const tier = useCommandStore((state) => state.tier);
+  const trialDay = useCommandStore((state) => state.trialDay);
 
   const isGodMode = tier === "operator" || tier === "studio" || tier === "dfy" || tier === "dwy";
   const isDay6BypassActive = allowDay6Bypass && trialDay === 6 && tier === "trial";
