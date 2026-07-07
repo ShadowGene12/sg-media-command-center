@@ -230,6 +230,7 @@ export const AppSidebar = () => {
                   <Link
                     key={j}
                     to={item.href}
+                    aria-label={item.label}
                     className={cn(
                       "flex items-center w-full px-2 py-2.5 rounded-xl text-sm transition-all duration-300 relative group",
                       isExactMatch
@@ -291,6 +292,7 @@ export const AppSidebar = () => {
       <div className="border-t border-white/[0.02] p-4 flex justify-center">
         <Link
           to="/settings/account"
+          aria-label="Settings"
           className="flex items-center w-full px-2 py-2.5 rounded-xl text-sm text-slate-400 hover:text-white hover:bg-white/[0.04] transition-all duration-300 group relative"
         >
           <div className="flex items-center justify-center w-8 h-8 flex-shrink-0">
