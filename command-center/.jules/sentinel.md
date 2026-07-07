@@ -1,0 +1,4 @@
+## 2024-07-07 - Verify JWTs in Edge Functions for Authentication Context
+**Vulnerability:** IDOR and Authentication Bypass. Edge functions were trusting `userId` and `email` directly from the client's HTTP request body without verification, and `await req.json()` was incorrectly called twice, causing failures.
+**Learning:** In Supabase Edge Functions, JWTs sent in the Authorization header are not automatically verified. To prevent authentication bypass, you must manually instantiate the Supabase client using the incoming Authorization header and call `supabase.auth.getUser()`.
+**Prevention:** Always inject the incoming JWT into the Supabase client via the global headers configuration structure (`createClient(url, anonKey, { global: { headers: { Authorization: req.headers.get('Authorization') ?? '' } } })`) and fetch the user context securely.
