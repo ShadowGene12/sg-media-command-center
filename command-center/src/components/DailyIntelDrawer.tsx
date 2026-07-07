@@ -6,8 +6,11 @@ import { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 export const DailyIntelDrawer = () => {
-  const { isDailyIntelOpen, setDailyIntelOpen, dailyInsight, trialDay, tier } =
-    useCommandStore();
+  const isDailyIntelOpen = useCommandStore((state) => state.isDailyIntelOpen);
+  const setDailyIntelOpen = useCommandStore((state) => state.setDailyIntelOpen);
+  const dailyInsight = useCommandStore((state) => state.dailyInsight);
+  const trialDay = useCommandStore((state) => state.trialDay);
+  const tier = useCommandStore((state) => state.tier);
 
   // Close on Escape
   useEffect(() => {

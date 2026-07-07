@@ -10,7 +10,7 @@ interface PremiumLockOverlayProps {
 }
 
 export function PremiumLockOverlay({ children, featureName, description }: PremiumLockOverlayProps) {
-  const { tier } = useCommandStore();
+  const tier = useCommandStore((state) => state.tier);
 
   if (tier === "dfy") {
     return <>{children}</>;
