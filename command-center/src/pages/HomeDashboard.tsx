@@ -285,7 +285,15 @@ const HomeDashboard = () => {
         </h1>
         <p className="text-lg text-slate-400 font-light max-w-2xl leading-relaxed">
           {activeDiagnostic
-            ? `Your primary bottleneck is in ${activeDiagnostic.primary_pillar?.replace(/_/g, " ") || "Sales & Conversion"}. I've queued your highest-leverage actions.`
+            ? `Your primary bottleneck is in ${
+                {
+                  market_offer: "Market & Offer Clarity",
+                  acquisition: "Customer Acquisition",
+                  sales: "Sales & Conversion",
+                  profit: "Profit Optimization",
+                  finance: "Financial Control"
+                }[activeDiagnostic.primary_pillar as string] || "Sales & Conversion"
+              }. I've queued your highest-leverage actions.`
             : "Your systems are online. Take the Bottleneck Detector to get your personalised diagnostic."}
         </p>
       </motion.div>
@@ -319,9 +327,13 @@ const HomeDashboard = () => {
                     </div>
                     <div>
                       <h3 className="text-3xl font-display font-light text-white mb-3">
-                        {activeDiagnostic.primary_pillar
-                          ?.replace(/_/g, " & ")
-                          .replace(/market offer/i, "Market & Offer") ||
+                        {{
+                          market_offer: "Market & Offer Clarity",
+                          acquisition: "Customer Acquisition",
+                          sales: "Sales & Conversion",
+                          profit: "Profit Optimization",
+                          finance: "Financial Control"
+                        }[activeDiagnostic.primary_pillar as string] ||
                           "Sales & Conversion"}
                       </h3>
                       <p className="text-slate-400 text-base max-w-xl leading-relaxed font-light">
@@ -357,7 +369,7 @@ const HomeDashboard = () => {
               <div className="relative z-10 mt-8">
                 {activeDiagnostic ? (
                   <Link to="/pillars">
-                    <Button className="bg-white hover:bg-white/95 text-black rounded-full px-8 h-12 font-medium transition-all active:scale-95 shadow-[0_0_20px_rgba(255,255,255,0.08)] hover:shadow-[0_0_32px_rgba(255,255,255,0.20)]">
+                    <Button className="bg-violet-600 hover:bg-violet-500 text-white rounded-full px-8 h-12 font-medium transition-all active:scale-95 shadow-[0_0_20px_rgba(109,74,230,0.4)] hover:shadow-[0_0_32px_rgba(109,74,230,0.5)]">
                       View Bottleneck Report{" "}
                       <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
@@ -395,10 +407,12 @@ const HomeDashboard = () => {
               </p>
               <div className="w-full h-8 mt-5 flex items-end justify-between gap-1 opacity-40">
                 {[4, 5, 3, 6, 7, 5, 8, 9].map((h, i) => (
-                  <div
+                  <motion.div
                     key={i}
-                    className="w-full bg-cyan-400/50 rounded-t-sm"
-                    style={{ height: `${h * 10}%` }}
+                    className="w-full bg-cyan-400/50 rounded-t-sm origin-bottom"
+                    initial={{ height: 0 }}
+                    animate={{ height: `${h * 10}%` }}
+                    transition={{ duration: 0.5, ease: "easeOut", delay: 0.6 + i * 0.05 }}
                   />
                 ))}
               </div>
@@ -510,7 +524,7 @@ const HomeDashboard = () => {
                         variant="ghost"
                         className="h-8 px-3 text-xs text-violet-400 hover:text-violet-300 hover:bg-violet-500/10 border border-violet-500/20 rounded-lg"
                       >
-                        View full diagnostic chain →
+                        View Full Diagnostic Chain →
                       </Button>
                     </Link>
                   </div>
@@ -549,7 +563,7 @@ const HomeDashboard = () => {
                         size="sm"
                         className="h-8 px-4 text-xs bg-amber-500/90 hover:bg-amber-500 text-black font-medium rounded-lg shadow-[0_0_12px_rgba(245,158,11,0.3)]"
                       >
-                        View your 30-day roadmap →
+                        View Your 30-Day Roadmap →
                       </Button>
                     </Link>
                   </div>

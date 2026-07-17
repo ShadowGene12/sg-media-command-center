@@ -196,7 +196,7 @@ export default function WorkspaceCanvas() {
                 value={notes}
                 onChange={handleNotesChange}
                 onKeyDown={handleKeyDown}
-                className="w-full h-full min-h-full border-0 resize-none bg-transparent focus-visible:ring-0 p-6 text-slate-300 leading-relaxed text-[15px]"
+                className="w-full h-full min-h-full border-0 resize-none bg-transparent focus-visible:ring-0 p-6 font-serif text-slate-300 leading-relaxed text-[15px]"
                 placeholder="Start typing your strategy here... Type '/' to open the command menu."
               />
 

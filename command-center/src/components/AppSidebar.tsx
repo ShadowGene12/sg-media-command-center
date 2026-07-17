@@ -57,7 +57,7 @@ export const AppSidebar = () => {
         {
           icon: Compass,
           label: "Diagnostic",
-          href: "/detector/history",
+          href: "/diagnostics",
           locked: false,
         },
       ],

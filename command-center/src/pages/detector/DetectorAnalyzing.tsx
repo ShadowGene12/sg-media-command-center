@@ -83,14 +83,20 @@ const DetectorAnalyzing = () => {
         {/* Phase 0 + 1: "Analyzing your responses..." */}
         <AnimatePresence>
           {phase >= 0 && (
-            <motion.p
+            <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: phase >= 3 ? 0.3 : 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="text-xl font-display font-medium text-[#F8F9FA] mb-12"
+              className="text-center mb-12 flex flex-col items-center"
             >
-              Analyzing your responses...
-            </motion.p>
+              <h2 className="text-2xl font-display font-medium text-white mb-2 tracking-tight flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-violet-500 animate-pulse" />
+                System Scan Initiated
+              </h2>
+              <p className="text-xs font-mono text-violet-400/80 uppercase tracking-widest">
+                Processing raw inputs against 5-pillar framework...
+              </p>
+            </motion.div>
           )}
         </AnimatePresence>
 

@@ -664,13 +664,28 @@ const DetectorFlow = () => {
               {/* Answers */}
               <div className="mb-8">
                 {question.type === "scenario" && (
-                  <div className="flex flex-col gap-3">
+                  <motion.div
+                    className="flex flex-col gap-3"
+                    variants={{
+                      hidden: { opacity: 0 },
+                      show: {
+                        opacity: 1,
+                        transition: { staggerChildren: 0.08, delayChildren: 0.1 },
+                      },
+                    }}
+                    initial="hidden"
+                    animate="show"
+                  >
                     {question.options?.map((opt) => {
                       const selected = answers[question.id] === opt.score;
                       return (
                         <motion.button
                           key={opt.id}
                           onClick={() => handleAnswer(opt.score)}
+                          variants={{
+                            hidden: { opacity: 0, y: 15, filter: "blur(4px)" },
+                            show: { opacity: 1, y: 0, filter: "blur(0px)" },
+                          }}
                           whileHover={{ y: -2 }}
                           whileTap={{ scale: 0.99 }}
                           transition={{
@@ -714,7 +729,7 @@ const DetectorFlow = () => {
                         </motion.button>
                       );
                     })}
-                  </div>
+                  </motion.div>
                 )}
               </div>
             </motion.div>

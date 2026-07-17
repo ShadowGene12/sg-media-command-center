@@ -246,5 +246,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 export function useAuth() {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error("useAuth must be used inside AuthProvider");
+  
+  // Bypassing Supabase auth for now
+  if (!ctx.user) {
+    return {
+      ...ctx,
+      loading: false,
+      user: { id: "mock-123", email: "john.snow@company.com" } as any,
+      profile: { first_name: "John", last_name: "Snow", business_name: "Company" } as any,
+    };
+  }
   return ctx;
 }

@@ -1,9 +1,11 @@
 import { useState, useRef, useEffect } from "react";
-import { Bot, Sparkles } from "lucide-react";
+import { Bot, Sparkles, Lock, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { UpgradeModal } from "@/components/UpgradeModal";
 import { AnimatedAIChat } from "@/components/ui/animated-ai-chat";
 import { PremiumAssetGuard } from "@/components/PremiumAssetGuard";
+import { PremiumCard } from "@/components/PremiumCard";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 import { useCommandStore } from "@/lib/store";
@@ -77,6 +79,28 @@ export default function AIAdvisorHub() {
   const [credits, setCredits] = useState(
     tier === "operator" || tier === "studio" || tier === "dfy" ? 999 : 5,
   );
+
+  if (tier === "free") {
+    return (
+      <div className="max-w-3xl mx-auto space-y-10 pb-12 pt-10 px-4 text-center">
+        <PremiumCard glowColor="rgba(139, 92, 246, 0.12)" className="p-10 md:p-14 flex flex-col items-center">
+          <div className="w-16 h-16 rounded-2xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center mb-6">
+            <Lock className="w-8 h-8 text-violet-400" />
+          </div>
+          <h2 className="text-3xl font-display font-light text-white mb-4">AI Advisor Locked</h2>
+          <p className="text-slate-400 max-w-lg mb-8 leading-relaxed font-light">
+            Your free tier includes permanent access to your Bottleneck Report and dashboard. Upgrade to Operator to unlock 24/7 strategic consulting trained on your specific bottlenecks.
+          </p>
+          <Link to="/upgrade">
+            <button className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 text-white rounded-full px-8 h-12 font-medium shadow-[0_0_20px_rgba(109,74,230,0.4)] hover:shadow-[0_0_32px_rgba(109,74,230,0.5)] transition-all">
+              Unlock Operator Access <ArrowRight className="w-4 h-4 ml-1" />
+            </button>
+          </Link>
+        </PremiumCard>
+      </div>
+    );
+  }
+
   const sessionId = useRef(crypto.randomUUID());
   const scrollRef = useRef<HTMLDivElement>(null);
 

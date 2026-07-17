@@ -140,7 +140,7 @@ const CommandCenterPreview = () => {
       </div>
 
       {/* App shell */}
-      <div className="flex" style={{ height: "clamp(460px, 60vh, 680px)" }}>
+      <div className="flex" style={{ height: "clamp(680px, 80vh, 900px)" }}>
         {/* Sidebar */}
         <div className="w-16 border-r border-white/[0.04] bg-black/60 flex flex-col flex-shrink-0">
           <div className="h-16 flex items-center justify-center border-b border-white/[0.03]">
@@ -663,7 +663,7 @@ const DetectorResultsLive = () => {
         initial={{ opacity: 0, y: 60 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, delay: 0.9, ease: "easeOut" }}
-        className="relative px-4 md:px-8 lg:px-12 pb-0"
+        className="relative px-4 md:px-8 lg:px-12 pb-24"
       >
         {/* Subtle top glow */}
         <div className="absolute -top-8 left-1/2 -translate-x-1/2 w-full max-w-2xl h-16 bg-violet-600/[0.12] rounded-full blur-3xl pointer-events-none" />

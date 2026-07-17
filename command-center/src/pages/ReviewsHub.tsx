@@ -1,9 +1,11 @@
 import { motion } from "framer-motion";
-import { Calendar, FileText, TrendingUp, ArrowRight } from "lucide-react";
+import { Calendar, FileText, TrendingUp, ArrowRight, Lock } from "lucide-react";
+import { Link } from "react-router-dom";
 import { PageHeader, SectionLabel } from "@/components/PageHeader";
 import { PremiumCard } from "@/components/PremiumCard";
 
 import { useAuth } from "@/lib/auth";
+import { useCommandStore } from "@/lib/store";
 import { supabase } from "@/lib/supabase";
 import { useQuery } from "@tanstack/react-query";
 
@@ -65,6 +67,28 @@ export default function ReviewsHub() {
   });
 
   const reviews = dbReviews && dbReviews.length > 0 ? dbReviews : FALLBACK_REVIEWS;
+  const { tier } = useCommandStore();
+
+  if (tier === "free") {
+    return (
+      <div className="max-w-3xl mx-auto space-y-10 pb-12 pt-10 px-4 text-center">
+        <PremiumCard glowColor="rgba(139, 92, 246, 0.12)" className="p-10 md:p-14 flex flex-col items-center">
+          <div className="w-16 h-16 rounded-2xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center mb-6">
+            <Lock className="w-8 h-8 text-violet-400" />
+          </div>
+          <h2 className="text-3xl font-display font-light text-white mb-4">Reviews & Reflection Locked</h2>
+          <p className="text-slate-400 max-w-lg mb-8 leading-relaxed font-light">
+            Your free tier includes permanent access to your Bottleneck Report and dashboard. Upgrade to Operator to unlock monthly self-reviews and progress tracking.
+          </p>
+          <Link to="/upgrade">
+            <button className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 text-white rounded-full px-8 h-12 font-medium shadow-[0_0_20px_rgba(109,74,230,0.4)] hover:shadow-[0_0_32px_rgba(109,74,230,0.5)] transition-all">
+              Unlock Operator Access <ArrowRight className="w-4 h-4 ml-1" />
+            </button>
+          </Link>
+        </PremiumCard>
+      </div>
+    );
+  }
 
   return (
   <div className="max-w-6xl mx-auto space-y-10 pb-12">
@@ -75,7 +99,7 @@ export default function ReviewsHub() {
         description="Monthly self-reviews to track progress and re-prioritize your focus."
       />
       <button className="flex-shrink-0 h-10 px-5 rounded-full bg-violet-600 text-white text-sm font-medium hover:bg-violet-500 transition-all active:scale-95 self-start md:self-end shadow-[0_0_20px_rgba(109,74,230,0.2)]">
-        Start monthly review
+        Start Monthly Review
       </button>
     </div>
 
@@ -100,7 +124,7 @@ export default function ReviewsHub() {
         </div>
       </div>
       <button className="flex-shrink-0 flex items-center gap-2 h-9 px-5 rounded-xl border border-white/[0.10] bg-white/[0.04] text-sm text-slate-300 hover:text-white hover:bg-white/[0.08] transition-all duration-200 self-start md:self-center">
-        Start review <ArrowRight className="h-3.5 w-3.5" />
+        Start Review <ArrowRight className="h-3.5 w-3.5" />
       </button>
     </motion.div>
 
@@ -164,7 +188,7 @@ export default function ReviewsHub() {
                       </p>
                     </div>
                     <button className="h-8 px-3 rounded-lg border border-white/[0.08] bg-white/[0.03] text-xs font-mono text-slate-500 hover:text-white hover:border-white/[0.14] transition-all opacity-0 group-hover:opacity-100">
-                      View full review
+                      View Full Review
                     </button>
                   </div>
                 </div>

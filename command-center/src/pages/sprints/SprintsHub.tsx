@@ -6,12 +6,14 @@ import {
   BarChart3,
   Clock,
   ArrowRight,
+  Lock,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { TierLockedCard } from "@/components/TierLockedCard";
 import { PageHeader, SectionLabel } from "@/components/PageHeader";
 import { EmptyState } from "@/components/EmptyState";
 import { PremiumCard } from "@/components/PremiumCard";
+import { useCommandStore } from "@/lib/store";
 
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
@@ -71,6 +73,28 @@ export default function SprintsHub() {
 
   const activeSprint = dbSprints?.find((s) => s.status === 'active') ?? FALLBACK_SPRINT;
   const pastSprints = dbSprints?.filter((s) => s.status !== 'active') ?? [];
+  const { tier } = useCommandStore();
+
+  if (tier === "free") {
+    return (
+      <div className="max-w-3xl mx-auto space-y-10 pb-12 pt-10 px-4 text-center">
+        <PremiumCard glowColor="rgba(139, 92, 246, 0.12)" className="p-10 md:p-14 flex flex-col items-center">
+          <div className="w-16 h-16 rounded-2xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center mb-6">
+            <Lock className="w-8 h-8 text-violet-400" />
+          </div>
+          <h2 className="text-3xl font-display font-light text-white mb-4">Sprint Tracker Locked</h2>
+          <p className="text-slate-400 max-w-lg mb-8 leading-relaxed font-light">
+            Your free tier includes permanent access to your Bottleneck Report and dashboard. Upgrade to Operator to execute focused sprints with metric tracking and AI-driven weekly insights.
+          </p>
+          <Link to="/upgrade">
+            <button className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 text-white rounded-full px-8 h-12 font-medium shadow-[0_0_20px_rgba(109,74,230,0.4)] hover:shadow-[0_0_32px_rgba(109,74,230,0.5)] transition-all">
+              Unlock Operator Access <ArrowRight className="w-4 h-4 ml-1" />
+            </button>
+          </Link>
+        </PremiumCard>
+      </div>
+    );
+  }
 
   const progressPercent = Math.min(
     100,

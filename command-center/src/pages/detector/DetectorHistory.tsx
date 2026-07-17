@@ -131,16 +131,21 @@ export default function DetectorHistory() {
   return (
     <div className="max-w-5xl mx-auto space-y-10 pb-20 pt-2 px-4 sm:px-6">
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-5">
-        <PageHeader
-          label="Growth Intelligence"
-          title="Diagnostic History"
-          description="Track your score trajectory and evolving bottlenecks over time."
-        />
+        <div>
+          <Link to="/diagnostics" className="inline-flex items-center gap-2 text-xs font-mono text-slate-400 hover:text-white mb-6 transition-colors">
+            <ArrowRight className="w-3.5 h-3.5 rotate-180" /> Back to Diagnostics
+          </Link>
+          <PageHeader
+            label="Growth Intelligence"
+            title="Diagnostic History"
+            description="Track your score trajectory and evolving bottlenecks over time."
+          />
+        </div>
         <Link
           to="/detector/flow"
           className="flex-shrink-0 self-start md:self-end"
         >
-          <button className="flex items-center gap-2 h-10 px-5 rounded-full bg-white text-black text-sm font-medium hover:bg-white/95 transition-all active:scale-95 shadow-[0_0_20px_rgba(255,255,255,0.08)] hover:shadow-[0_0_30px_rgba(255,255,255,0.18)]">
+          <button className="flex items-center gap-2 h-10 px-5 rounded-full bg-violet-600 text-white text-sm font-medium hover:bg-violet-500 transition-all active:scale-95 shadow-[0_0_20px_rgba(109,74,230,0.2)]">
             <BarChart2 className="w-4 h-4" /> New Diagnostic Run
           </button>
         </Link>

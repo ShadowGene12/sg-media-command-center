@@ -196,9 +196,9 @@ const ActionPlan = () => {
         />
         <button
           onClick={() => setAdding(true)}
-          className="flex-shrink-0 self-start md:self-end flex items-center gap-2 h-10 px-5 rounded-full bg-white text-black text-sm font-medium hover:bg-white/90 transition-all active:scale-95 shadow-[0_0_20px_rgba(255,255,255,0.08)]"
+          className="flex-shrink-0 self-start md:self-end flex items-center gap-2 h-10 px-5 rounded-full bg-violet-600 text-white text-sm font-medium hover:bg-violet-500 transition-all active:scale-95 shadow-[0_0_20px_rgba(109,74,230,0.2)]"
         >
-          <Plus className="h-4 w-4" /> Add action
+          <Plus className="h-4 w-4" /> Add Action
         </button>
       </div>
 

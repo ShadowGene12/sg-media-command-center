@@ -115,7 +115,7 @@ export const DailyIntelDrawer = () => {
 
                 <div className="pt-4 border-t border-white/[0.04]">
                   <Link to="/actions" onClick={() => setDailyIntelOpen(false)}>
-                    <Button className="w-full bg-white hover:bg-white/90 text-black rounded-lg h-12 font-medium">
+                    <Button className="w-full bg-violet-600 hover:bg-violet-500 text-white rounded-lg h-12 font-medium shadow-[0_0_20px_rgba(109,74,230,0.4)]">
                       Execute in Workspace{" "}
                       <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>

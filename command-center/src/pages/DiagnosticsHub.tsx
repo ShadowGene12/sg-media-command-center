@@ -117,7 +117,7 @@ const DiagnosticsHub = () => (
       </div>
       <div className="flex gap-2 flex-shrink-0">
         <Link to="/detector/flow">
-          <Button className="bg-white hover:bg-slate-100 text-black rounded-full h-10 px-5 text-sm font-medium">
+          <Button className="bg-violet-600 hover:bg-violet-500 text-white rounded-full h-10 px-5 text-sm font-medium shadow-[0_0_20px_rgba(109,74,230,0.2)]">
             Run new diagnostic <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
           </Button>
         </Link>
@@ -211,7 +211,15 @@ const DiagnosticsHub = () => (
 
     {/* History */}
     <div>
-      <SectionLabel className="mb-4">Diagnostic History</SectionLabel>
+      <div className="flex items-center justify-between mb-4">
+        <SectionLabel className="mb-0">Diagnostic History</SectionLabel>
+        <Link
+          to="/detector/history"
+          className="text-xs font-mono text-violet-400 hover:text-violet-300 transition-colors"
+        >
+          View all history →
+        </Link>
+      </div>
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}

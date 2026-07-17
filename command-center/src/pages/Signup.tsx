@@ -46,30 +46,12 @@ const Signup = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
-    if (form.password.length < 8) {
-      setError("Password must be at least 8 characters.");
-      return;
-    }
     setLoading(true);
-    const { data, error } = await signUp(form.email, form.password, {
-      first_name: form.firstName,
-      last_name: form.lastName,
-      business_name: form.business,
-    });
-    setLoading(false);
-    if (error) {
-      setError(
-        error.message.includes("already registered")
-          ? "That email already has an account. Log in instead."
-          : error.message,
-      );
-    } else if (!data?.session) {
-      setError("Please check your email to confirm your account. You cannot log in with fake data unless you disable 'Confirm email' in Supabase.");
-    } else {
-      // Navigate into Command Center — pending diagnostic gets flushed to DB automatically
+    // Bypassing Supabase for now as requested
+    setTimeout(() => {
+      setLoading(false);
       navigate("/dashboard");
-    }
+    }, 500);
   };
 
   return (
@@ -193,7 +175,7 @@ const Signup = () => {
                     </Label>
                     <Input
                       id="lastName"
-                      placeholder="Smith"
+                      placeholder="Snow"
                       value={form.lastName}
                       onChange={set("lastName")}
                       required
@@ -212,7 +194,7 @@ const Signup = () => {
                   <Input
                     id="email"
                     type="email"
-                    placeholder="john@company.com"
+                    placeholder="john.snow@company.com"
                     value={form.email}
                     onChange={set("email")}
                     required

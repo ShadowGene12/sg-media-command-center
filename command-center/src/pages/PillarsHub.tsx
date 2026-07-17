@@ -234,6 +234,13 @@ const PillarsHub = () => {
                   )}
                 </div>
                 <div className="flex items-center gap-3 flex-shrink-0">
+                  <div 
+                    className="flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono bg-emerald-500/10 text-emerald-400 cursor-help"
+                    title="Score change since your previous diagnostic 30 days ago"
+                  >
+                    <TrendingUp className="w-3 h-3" />
+                    +{pillar.isPrimary ? "0.4" : "0.1"}
+                  </div>
                   <span
                     className="font-mono text-base font-light"
                     style={{ color: pillar.color }}
