@@ -207,10 +207,11 @@ export default function AIAdvisorHub() {
     } catch (err: any) {
       console.error(err);
       // Fallback response if Edge function fails/isn't deployed
+      // SECURITY: Do not expose internal infrastructure details or error messages to the user
       const fallbackMsg: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: `Error connecting to AI: ${err.message}. Please check if the 'ai-advisor' Edge Function is deployed and OPENAI_API_KEY is set.`,
+        content: "I'm currently unable to process your request due to a temporary system error. Please try again later.",
       };
       setMessages((prev) => [...prev, fallbackMsg]);
       setIsTyping(false);
